@@ -1,0 +1,140 @@
+! Terminal: urxvt
+! ===============
+
+! Tango color scheme
+! ------------------
+!*.foreground:       #eeeeec
+!*.background:       #2e3436
+!*.cursorColor:      #8ae234
+!*.colorUL:          #8ae234
+!*.underlineColor:   #92659a
+
+! - Aluminium -
+!*.color0:           #2e3436
+!*.color8:           #888A85
+! - Scariet Red -
+!*.color1:           #cc0000
+!*.color9:           #ef2929
+! - Chameleon -
+!*.color2:           #4e9a06
+!*.color10:          #8ae234
+! - Butter -
+!*.color3:           #edd400
+!*.color11:          #fce94f
+! - Sky Blue -
+!*.color4:           #3465a4
+!*.color12:          #729fcf
+! - Plum -
+!*.color5:           #92659a
+!*.color13:          #c19fbe
+! - Cyan -
+!*.color6:           #07c7ca
+!.color14:          #63e9e9
+! - Aluminium 2 -
+!*.color7:           #d3d7cf
+!*.color15:          #eeeeec
+
+! GVCCI Color Scheme
+! ----------------------
+! special
+!*.foreground:   #f2a97d
+!*.background:   #381818
+!*.cursorColor:  #f2a97d
+
+! black
+!*.color0:       #140909
+!*.color8:       #381818
+
+! red
+!*.color1:       #8e615f
+!*.color9:       #ab817e
+
+! green
+!*.color2:       #666f68
+!*.color10:      #838f87
+
+! yellow
+!*.color3:       #ac531c
+!*.color11:      #dc6d29
+
+! blue
+!*.color4:       #5e7069
+!*.color12:      #7a9088
+
+! magenta
+!*.color5:       #886855
+!*.color13:      #a88671
+
+! cyan
+!*.color6:       #5f6f6f
+!*.color14:      #7b8f90
+
+! white
+!*.color7:       #cbe7e4
+!*.color15:      #f4fafa
+
+
+! terminal.sexy Color Scheme
+! ----------------------
+! special
+*.foreground:   #f2a97d
+*.background:   #381818
+*.cursorColor:  #f2a97d
+
+! black
+*.color0:       #41444a
+*.color8:       #373b41
+
+! red
+*.color1:       #a54242
+*.color9:       #cc6666
+
+! green
+*.color2:       #8c9440
+*.color10:      #b5bd68
+
+! yellow
+*.color3:       #DE803F
+*.color11:      #F0B94E
+
+! blue
+*.color4:       #256295
+*.color12:      #5185B1
+
+! magenta
+*.color5:       #85678f
+*.color13:      #b294bb
+
+! cyan
+*.color6:       #5e8d87
+*.color14:      #8abeb7
+
+! white
+*.color7:       #707880
+*.color15:      #c5c8c6
+
+
+! Transparency
+! ------------
+!URxvt*depth:		32
+!URxvt*background:	rgba:0000/0000/0200/c800
+
+! Options
+! -------
+URxvt.saveLines: 1000
+URxvt.scrollBar: false
+URxvt.secondaryScroll: true
+!*.font: monospace:pixelsize=20
+!st.fontalt0: Font Awesome 5 Free,Font Awesome 5 Free Solid:style=Solid:pixelsize=12
+URxvt.iso14755: False
+URxvt.perl-ext-common: default,matcher,clipboard
+URxvt.keysym.Shift-Control-V: perl:clipboard:paste
+Urxvt.keysym.Shift-Control-C: perl:clipboard:copy
+URxvt.keysym.C-C: perl:clipboard:copy
+*.urlLauncher: microsoft-edge-dev
+URxvt.matcher.button: 1
+URxvt.dpi: 192
+
+! Other
+! _____
+Xft.dpi: 128
