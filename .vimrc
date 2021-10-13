@@ -1,0 +1,1 @@
+/home/zoomiti/.config/nvim/init.vim

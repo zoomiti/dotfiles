@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/home/zoomiti'
+let g:netrw_dirhist_5='/home/zoomiti/.config/neofetch'
+let g:netrw_dirhist_4='/home/zoomiti/.config'
+let g:netrw_dirhist_3='/home/zoomiti'
+let g:netrw_dirhist_2='/home/zoomiti/.config/neofetch'
+let g:netrw_dirhist_1='/home/zoomiti/.config'
+let g:netrw_dirhist_0='/home/zoomiti'
+let g:netrw_dirhist_9='/home/zoomiti/.rpg'
+let g:netrw_dirhist_8='/home/zoomiti'
+let g:netrw_dirhist_7='/etc/fonts/conf.d'
