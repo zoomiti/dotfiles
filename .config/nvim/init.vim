@@ -13,6 +13,9 @@ Plug 'tpope/vim-surround'
 "Latex
 Plug 'lervag/vimtex'
 
+" For snippets
+Plug 'SirVer/ultisnips'
+
 "LEAN REQUIRES NVIM
 if has("nvim")
 Plug 'Julian/lean.nvim'
@@ -20,7 +23,6 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
 
 Plug 'hrsh7th/nvim-compe'  " For LSP completion
-Plug 'hrsh7th/vim-vsnip'   " For snippets
 Plug 'andrewradev/switch.vim'  " For Lean switch support
 end
 call plug#end()
