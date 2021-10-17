@@ -20,6 +20,10 @@ alias webcam='mpv --demuxer-lavf-o=video_size=1920x1080,input_format=mjpeg av://
 alias xp="xprop | awk '/^WM_CLASS/{sub(/.* =/, \"instance:\"); sub(/,/, \"\nclass:\"); print}/^WM_NAME/{sub(/.* =/, \"title:\"); print}'"
 
 alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+
+alias nvcfg='nvim ~/.config/nvim/init.vim'
 
 alias rpg-battle="rpg-cli cd -f . && rpg-cli battle"
 
@@ -56,4 +60,8 @@ ls () {
 
 PS1='[\u@\h \W]\$ '
 
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+
 complete -cf sudo
+export PATH="$PATH:~/.local/bin"
