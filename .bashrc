@@ -43,7 +43,7 @@ cd () {
     builtin cd "$@"
     command ls --color=auto
 	if [[ $PWD == ~ ]] ; then
-    	rpg-cli cd ~
+    	rpg-cli cd -f ~
 	else
     	rpg-cli cd -f .
 		rpg-cli battle
