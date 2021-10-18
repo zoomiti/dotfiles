@@ -27,10 +27,16 @@ Plug 'andrewradev/switch.vim'  " For Lean switch support
 end
 call plug#end()
 
+
 " Conceal options
 hi clear Conceal
 set conceallevel=2
 set concealcursor=n
+
+" UltiSnips Config
+let g:UltiSnipsExpandTrigger="<tab>"                                            
+let g:UltiSnipsJumpForwardTrigger="<tab>"                                       
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"                                    
 
 set encoding=utf-8
 
