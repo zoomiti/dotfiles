@@ -64,5 +64,5 @@ bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 
 complete -cf sudo
-export PATH="$PATH:~/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.elan/bin:$PATH"
