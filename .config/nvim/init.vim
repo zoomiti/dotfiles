@@ -5,6 +5,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin()
+" CSS-Color
 Plug 'ap/vim-css-color'
 
 "Surround
@@ -16,17 +17,19 @@ Plug 'lervag/vimtex'
 " For snippets
 Plug 'SirVer/ultisnips'
 
-"LEAN REQUIRES NVIM
 if has("nvim")
-Plug 'Julian/lean.nvim'
+" LSP
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/plenary.nvim'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/nvim-cmp'  " For LSP completion
 
-Plug 'hrsh7th/nvim-compe'  " For LSP completion
+"Lean requires nvim
+Plug 'Julian/lean.nvim'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'andrewradev/switch.vim'  " For Lean switch support
 end
-call plug#end()
 
+call plug#end()
 
 " Conceal options
 hi clear Conceal
@@ -40,28 +43,25 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 set encoding=utf-8
 
+set completeopt=menu,menuone,noselect
+
 " Tab AutoComplete
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+	let col = col('.') - 1
+	if !col || getline('.')[col - 1] !~ '\k'
+		return "\<tab>"
+	else
+		return "\<c-p>"
+	endif
 endfunction
+
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
 " Make
 set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
 syntax on
-
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
-"set background=dark
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -123,18 +123,47 @@ end
 
 " Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
+	source /etc/vim/vimrc.local
 endif
 
 " LSP Setup
 if has("nvim")
 lua <<EOF
-    -- If you don't already have a preferred neovim LSP setup, you may want
-	-- to reference the nvim-lspconfig documentation, which can be found at:
-	-- https://github.com/neovim/nvim-lspconfig#keybindings-and-completion
-	-- For completeness (of showing this plugin's settings), we show
-	-- a barebones LSP attach handler (which will give you Lean LSP
-	-- functionality in attached buffers) here:
+
+	-- Setup nvim-cmp.
+	local cmp = require'cmp'
+
+	cmp.setup({
+		snippet = {
+			expand = function(args)
+				-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+				-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+				vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+				-- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
+			end,
+		},
+		mapping = {
+			['<C-d>'] = cmp.mapping.scroll_docs(-4),
+			['<C-f>'] = cmp.mapping.scroll_docs(4),
+			['<C-Space>'] = cmp.mapping.complete(),
+			['<C-e>'] = cmp.mapping.close(),
+			['<CR>'] = cmp.mapping.confirm({ select = true }),
+		},
+		sources = cmp.config.sources({
+			{ name = 'nvim_lsp' },
+			-- { name = 'vsnip' }, -- For vsnip users.
+			-- { name = 'luasnip' }, -- For luasnip users.
+			{ name = 'ultisnips' }, -- For ultisnips users.
+			-- { name = 'snippy' }, -- For snippy users.
+		}, {
+			{ name = 'buffer' },
+		})
+	})
+
+	-- Setup lspconfig.
+	local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+	require('lspconfig')['texlab'].setup { capabilities = capabilities }
+
 	local function on_attach(client, bufnr)
 		local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 		local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -158,43 +187,43 @@ lua <<EOF
 
         -- Abbreviation support
         abbreviations = {
-        -- Set one of the following to true to enable abbreviations
-        builtin = false, -- built-in expander
-        compe = false, -- nvim-compe source
-        snippets = false, -- snippets.nvim source
-        -- additional abbreviations:
-        extra = {
-          -- Add a \wknight abbreviation to insert ♘
-          --
-          -- Note that the backslash is implied, and that you of
-          -- course may also use a snippet engine directly to do
-          -- this if so desired.
-          wknight = '♘',
-        },
-        -- Change if you don't like the backslash
-        -- (comma is a popular choice on French keyboards)
-        leader = '\\',
+			-- Set one of the following to true to enable abbreviations
+			builtin = true, -- built-in expander
+			compe = false, -- nvim-compe source
+			snippets = false, -- snippets.nvim source
+			-- additional abbreviations:
+			extra = {
+				-- Add a \wknight abbreviation to insert ♘
+				--
+				-- Note that the backslash is implied, and that you of
+				-- course may also use a snippet engine directly to do
+				-- this if so desired.
+				wknight = '♘',
+			},
+			-- Change if you don't like the backslash
+			-- (comma is a popular choice on French keyboards)
+			leader = '\\',
         },
 
         -- Enable suggested mappings?
         --
         -- false by default, true to enable
-        mappings = false,
+        mappings = true,
 
         -- Infoview support
         infoview = {
-        -- Automatically open an infoview on entering a Lean buffer?
-        autoopen = true,
-        -- Set the infoview windows' widths
-        width = 50,
+			-- Automatically open an infoview on entering a Lean buffer?
+			autoopen = true,
+			-- Set the infoview windows' widths
+			width = 30,
         },
 
         -- Progress bar support
         progress_bars = {
-        -- Enable the progress bars?
-        enable = true,
-        -- Use a different priority for the signs
-        priority = 10,
+			-- Enable the progress bars?
+			enable = true,
+			-- Use a different priority for the signs
+			priority = 10,
         },
     }
 EOF
