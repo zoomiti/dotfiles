@@ -11,11 +11,14 @@ Plug 'ap/vim-css-color'
 "Surround
 Plug 'tpope/vim-surround'
 
-"Latex
-Plug 'lervag/vimtex'
-
 " For snippets
 Plug 'SirVer/ultisnips'
+
+" Latex
+Plug 'lervag/vimtex'
+
+" Table mode
+Plug 'dhruvasagar/vim-table-mode'
 
 if has("nvim")
 " LSP
@@ -59,7 +62,7 @@ inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
 " Make
-set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
+" set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
 
 syntax on
 
@@ -90,10 +93,10 @@ set shiftwidth=4
 set showmatch           " Show matching brackets.
 "set ignorecase         " Do case insensitive matching
 set smartcase           " Do smart case matching
-"set incsearch          " Incremental search
+set incsearch          " Incremental search
 set autowrite           " Automatically save before commands like :next and :make
-"set hidden             " Hide buffers when they are abandoned
-"set mouse=a            " Enable mouse usage (all modes)
+set hidden             " Hide buffers when they are abandoned
+set mouse=a            " Enable mouse usage (all modes)
 set number              " Enable line numbers
 set relativenumber      " Enable relative line numbers
 
@@ -119,7 +122,7 @@ if has("nvim")
 	tnoremap <C-W><down> <C-\><C-N><C-W><down>
 	tnoremap <C-W><up> <C-\><C-N><C-W><up>
 	tnoremap <C-W><right> <C-\><C-N><C-W><right>
-end
+endif
 
 " Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
@@ -128,7 +131,7 @@ endif
 
 " LSP Setup
 if has("nvim")
-lua <<EOF
+lua << EOF
 
 	-- Setup nvim-cmp.
 	local cmp = require'cmp'
@@ -172,21 +175,27 @@ lua <<EOF
 		buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 	end
 	require('lean').setup{
-        -- Enable the Lean language server(s)?
-        --
-        -- false to disable, otherwise should be a table of options to pass to
-        --  `leanls` and/or `lean3ls`.
-        --
-        -- See https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#leanls for details.
+		-- Enable the Lean language server(s)?
+		--
+		-- false to disable, otherwise should be a table of options to pass to
+		--	`leanls` and/or `lean3ls`.
+		--
+		-- See https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#leanls for details.
 
-        -- Lean 4
-        lsp = { on_attach = on_attach },
+		-- Lean 4
+		lsp = { on_attach = on_attach },
 
-        -- Lean 3
-        lsp3 = { on_attach = on_attach },
+		-- Lean 3
+		lsp3 = { on_attach = on_attach },
 
-        -- Abbreviation support
-        abbreviations = {
+		-- What filetype should be associated with standalone Lean files?
+		-- Can be set to "lean3" if you prefer that default.
+		-- Having a leanpkg.toml or lean-toolchain file should always mean
+		-- autodetection works correctly.
+		ft = { default = "lean3" },
+
+		-- Abbreviation support
+		abbreviations = {
 			-- Set one of the following to true to enable abbreviations
 			builtin = true, -- built-in expander
 			compe = false, -- nvim-compe source
@@ -203,28 +212,28 @@ lua <<EOF
 			-- Change if you don't like the backslash
 			-- (comma is a popular choice on French keyboards)
 			leader = '\\',
-        },
+		},
 
-        -- Enable suggested mappings?
-        --
-        -- false by default, true to enable
-        mappings = true,
+		-- Enable suggested mappings?
+		--
+		-- false by default, true to enable
+		mappings = true,
 
-        -- Infoview support
-        infoview = {
+		-- Infoview support
+		infoview = {
 			-- Automatically open an infoview on entering a Lean buffer?
 			autoopen = true,
 			-- Set the infoview windows' widths
 			width = 30,
-        },
+		},
 
-        -- Progress bar support
-        progress_bars = {
+		-- Progress bar support
+		progress_bars = {
 			-- Enable the progress bars?
 			enable = true,
 			-- Use a different priority for the signs
 			priority = 10,
-        },
+		},
     }
 EOF
-end
+endif
