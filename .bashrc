@@ -39,6 +39,8 @@ alias chmod="rpg-battle && chmod"
 alias la='ls -a'
 alias ll='ls -la'
 
+alias vifm='vifmrun'
+
 cd () {
     builtin cd "$@"
     command ls --color=auto
@@ -66,3 +68,9 @@ bind '"\e[B": history-search-forward'
 complete -cf sudo
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.elan/bin:$PATH"
+
+#case $TERM in
+#    rxvt|*term|st*)
+#        PROMPT_COMMAND='echo -ne "\033]0;$PWD\007"'
+#    ;;
+#esac

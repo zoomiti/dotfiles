@@ -1,0 +1,27 @@
+schemes:
+  zoomiti: &dark
+    primary:
+      background: '#381818'
+      foreground: '#f2a97d'
+    normal:              
+      black:      '#41444a'
+      red:        '#a54242'
+      green:      '#8c9440'
+      yellow:     '#DE803F'
+      blue:       '#256295'
+      magenta:    '#85678f'
+      cyan:       '#5e8d87'
+      white:      '#707880'
+    bright:              
+      black:      '#373b41'
+      red:        '#cc6666'
+      green:      '#b5bd68'
+      yellow:     '#F0B94E'
+      blue:       '#5185B1'
+      magenta:    '#b294bb'
+      cyan:       '#8abeb7'
+      white:      '#c5c8c6'
+
+colors: *dark
+
+background_opacity: 0.8

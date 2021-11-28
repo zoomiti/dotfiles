@@ -3,12 +3,29 @@ snippet fig "figure"
 	\centering
 	\includegraphics[width=.8\textwidth]{$1}
 	\caption{$3}
-	\label{$2}
+	\label{fig:$2}
 \end{figure}
+endsnippet
+
+snippet tab "table"
+\begin{table}
+	\centering
+	\begin{tabular}{$1}
+		$0
+	\end{tabular}
+	\caption{$3}
+	\label{table:$2}
+\end{table}
 endsnippet
 
 snippet \beg "\begin{}...\end{}"
 \begin{$1}
 	$0
 \end{$1}
+endsnippet
+
+snippet enum "list"
+\begin{enumerate}[label=$1]
+	\item $0
+\end{enumerate}
 endsnippet

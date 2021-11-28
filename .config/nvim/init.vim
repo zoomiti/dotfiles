@@ -14,6 +14,12 @@ Plug 'tpope/vim-surround'
 " For snippets
 Plug 'SirVer/ultisnips'
 
+" Vifm replacing netrw
+Plug 'vifm/vifm.vim'
+
+" Git nuff said
+Plug 'tpope/vim-fugitive'
+
 " Latex
 Plug 'lervag/vimtex'
 
@@ -34,6 +40,10 @@ end
 
 call plug#end()
 
+nnoremap <Space> <nop>
+let mapleader=" "
+let maplocalleader=" "
+
 " Conceal options
 hi clear Conceal
 set conceallevel=2
@@ -44,22 +54,22 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"                                       
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"                                    
 
+" Fugitive Config
+nnoremap <leader>gs :G<CR>
+
 set encoding=utf-8
 
 set completeopt=menu,menuone,noselect
 
-" Tab AutoComplete
-function! InsertTabWrapper()
-	let col = col('.') - 1
-	if !col || getline('.')[col - 1] !~ '\k'
-		return "\<tab>"
-	else
-		return "\<c-p>"
-	endif
-endfunction
-
-inoremap <expr> <tab> InsertTabWrapper()
-inoremap <s-tab> <c-n>
+" VIFM
+let g:loaded_netrw       = 1
+let g:loaded_netrwPlugin = 1
+let g:vifm_replace_netrw = 1
+let g:vifm_embed_split = 1
+let g:vifm_exec = "vifmrun"
+command Vex vertical VsplitVifm
+command Sex SplitVifm
+command Ex Vifm
 
 " Make
 " set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
@@ -99,6 +109,7 @@ set hidden             " Hide buffers when they are abandoned
 set mouse=a            " Enable mouse usage (all modes)
 set number              " Enable line numbers
 set relativenumber      " Enable relative line numbers
+set title				" Changes terminal title when started
 
 " Terminal Settings
 if has("nvim")
