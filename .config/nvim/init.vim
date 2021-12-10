@@ -57,6 +57,8 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " Fugitive Config
 nnoremap <leader>gs :G<CR>
 
+nnoremap <Enter> :nohl<Enter><Enter>
+
 set encoding=utf-8
 
 set completeopt=menu,menuone,noselect
@@ -110,6 +112,13 @@ set mouse=a            " Enable mouse usage (all modes)
 set number              " Enable line numbers
 set relativenumber      " Enable relative line numbers
 set title				" Changes terminal title when started
+set scrolloff=15
+
+noremap ; l
+noremap l k
+noremap k j
+noremap j h
+
 
 " Terminal Settings
 if has("nvim")

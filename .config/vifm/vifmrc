@@ -7,6 +7,11 @@
 
 " ------------------------------------------------------------------------------
 
+noremap ; l
+noremap l k
+noremap k j
+noremap j h
+
 " Command used to edit files in various contexts.  The default is vim.
 " If you would like to use another vi clone such as Elvis or Vile
 " you will need to change this setting.
