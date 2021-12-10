@@ -25,3 +25,8 @@ schemes:
 colors: *dark
 
 background_opacity: 0.8
+
+font:
+  normal:
+    family: Jetbrains Mono
+
