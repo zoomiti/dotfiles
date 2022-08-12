@@ -1,15 +1,18 @@
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin()
+Plug 'vim-airline/vim-airline'
+
 " CSS-Color
 Plug 'ap/vim-css-color'
 
 "Surround
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
 
 " For snippets
 Plug 'SirVer/ultisnips'
@@ -74,24 +77,38 @@ nnoremap <Space> <nop>
 let mapleader=" "
 let maplocalleader=" "
 
+" Colors
+if has('termguicolors')
+	if &term =~ 'alacritty'
+		set t_8f=[38;2;%lu;%lu;%lum
+		set t_8b=[48;2;%lu;%lu;%lum
+	endif
+	set termguicolors
+endif
+let g:dark_transp_bg = 1
+if has('nvim')
+	au ColorScheme * hi Normal ctermbg=none guibg=none|hi LineNr guibg=none ctermbg=none|hi Folded guibg=none ctermbg=none|hi NonText guibg=none ctermbg=none|hi SpecialKey guibg=none ctermbg=none|hi VertSplit guibg=none ctermbg=none|hi SignColumn guibg=none ctermbg=none|hi EndOfBuffer guibg=none ctermbg=none
+endif
+colorscheme fire
+
 " Conceal options
 hi clear Conceal
 set conceallevel=2
 set concealcursor=n
 
 " UltiSnips Config
-let g:UltiSnipsExpandTrigger="<tab>"                                            
-let g:UltiSnipsJumpForwardTrigger="<tab>"                                       
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"                                    
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " Fugitive Config
 nnoremap <leader>gs :G<CR>
 
-nnoremap <Enter> :nohl<Enter><Enter>
+nnoremap <Enter> :nohl<CR><C-l><Enter>
 
 set encoding=utf-8
 
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone,noselect,noinsert
 
 " VIFM
 let g:loaded_netrw       = 1
@@ -114,10 +131,10 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " Autocompile dwmblocks
 if has("nvim")
-  autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
 else
-  autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
-end
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
+endif
 
 " Uncomment the following to have Vim load indentation rules and plugins
 " according to the detected filetype.
@@ -139,6 +156,7 @@ set incsearch          " Incremental search
 set autowrite           " Automatically save before commands like :next and :make
 set hidden             " Hide buffers when they are abandoned
 set mouse=a            " Enable mouse usage (all modes)
+set mousemodel=popup
 set number              " Enable line numbers
 set relativenumber      " Enable relative line numbers
 set title				" Changes terminal title when started
@@ -148,7 +166,12 @@ noremap ; l
 noremap l k
 noremap k j
 noremap j h
+noremap h ;
 
+noremap <C-W>j <C-\><C-N><C-W>h
+noremap <C-W>k <C-\><C-N><C-W>j
+noremap <C-W>l <C-\><C-N><C-W>k
+noremap <C-W>; <C-\><C-N><C-W>l
 
 " Terminal Settings
 if has("nvim")
@@ -158,16 +181,16 @@ if has("nvim")
 	" Disable line numbers on terminals
 	autocmd TermOpen * :setlocal nonumber norelativenumber
 	" allows you to use Ctrl-c on terminal window
-    autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c><C-\><C-n>
+	autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c><C-\><C-n>
 	" Allows for esc to leave insert mode
 	tnoremap <Esc> <C-\><C-n>
 	" Allows for window navigation
 	tnoremap <C-W><C-W> <C-\><C-N><C-W><C-W>
 	tnoremap <C-W><C-N> <C-\><C-N>
-	tnoremap <C-W>h <C-\><C-N><C-W>h
-	tnoremap <C-W>j <C-\><C-N><C-W>j
-	tnoremap <C-W>k <C-\><C-N><C-W>k
-	tnoremap <C-W>l <C-\><C-N><C-W>l
+	tnoremap <C-W>j <C-\><C-N><C-W>h
+	tnoremap <C-W>k <C-\><C-N><C-W>j
+	tnoremap <C-W>l <C-\><C-N><C-W>k
+	tnoremap <C-W>; <C-\><C-N><C-W>l
 	tnoremap <C-W><left> <C-\><C-N><C-W><left>
 	tnoremap <C-W><down> <C-\><C-N><C-W><down>
 	tnoremap <C-W><up> <C-\><C-N><C-W><up>
