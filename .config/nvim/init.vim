@@ -19,12 +19,30 @@ Plug 'vifm/vifm.vim'
 
 " Git nuff said
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 " Latex
 Plug 'lervag/vimtex'
 
+" Rust
+Plug 'rust-lang/rust.vim'
+let g:rustfmt_autosave = 1
+if has("nvim")
+	Plug 'simrat39/rust-tools.nvim' " Adds extra functionality over rust analyzer
+endif
+
+" Markdown
+Plug 'preservim/vim-markdown'
+
 " Table mode
 Plug 'dhruvasagar/vim-table-mode'
+
+" Color schemes
+Plug 'zoomiti/firewatch'
+Plug 'sonph/onehalf', { 'rtp': 'vim' }
+Plug 'sjl/badwolf'
+Plug 'lifepillar/vim-colortemplate'
+Plug 'cocopon/inspecthi.vim'
 
 if has("nvim")
 " LSP
@@ -32,11 +50,23 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/nvim-cmp'  " For LSP completion
 
-"Lean requires nvim
+" Debugging
+Plug 'mfussenegger/nvim-dap'
+
+" Lean requires nvim
 Plug 'Julian/lean.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'andrewradev/switch.vim'  " For Lean switch support
-end
+Plug 'norcalli/nvim-colorizer.lua' " For colorizing
+
+" Tree sitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'lewis6991/spellsitter.nvim'
+Plug 'nvim-treesitter/playground'
+
+" Copilot
+Plug 'github/copilot.vim'
+endif
 
 call plug#end()
 
@@ -150,110 +180,187 @@ if filereadable("/etc/vim/vimrc.local")
 endif
 
 " LSP Setup
+
 if has("nvim")
-lua << EOF
+	lua << EOF
+	-- Setup treesitter
+	require'nvim-treesitter.configs'.setup {
+		-- A list of parser names, or "all"
+		ensure_installed = { "c", "lua", "rust", "vim" },
+
+		-- Install parsers synchronously (only applied to `ensure_installed`)
+		sync_install = false,
+
+		-- Automatically install missing parsers when entering buffer
+		auto_install = true,
+
+		-- List of parsers to ignore installing (for "all")
+		ignore_install = { "javascript" },
+
+		highlight = {
+			-- `false` will disable the whole extension
+			enable = true,
+
+			-- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+			-- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+			-- the name of the parser)
+			-- list of language that will be disabled
+			disable = { 'latex', 'markdown' },
+
+			-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+			-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+			-- Using this option may slow down your editor, and you may see some duplicate highlights.
+			-- Instead of true it can also be a list of languages
+			additional_vim_regex_highlighting = false,
+			},
+
+		incremental_selection = {
+			enable = true,
+			keymaps = {
+				init_selction = "gnn",
+				node_incremental = "grn",
+				scope_incremental = "grc",
+				node_decremental = "grm",
+				}
+			},
+
+		indent = {
+			enable = true,
+			},
+
+		playground = {
+			enable = true,
+			},
+		}
+	require('spellsitter').setup()
+	require'colorizer'.setup()
 
 	-- Setup nvim-cmp.
 	local cmp = require'cmp'
 
 	cmp.setup({
-		snippet = {
-			expand = function(args)
-				-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-				-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-				vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-				-- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
-			end,
+	snippet = {
+		expand = function(args)
+		-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+		-- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+		vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+		-- require'snippy'.expand_snippet(args.body) -- For `snippy` users.
+		end,
 		},
-		mapping = {
-			['<C-d>'] = cmp.mapping.scroll_docs(-4),
-			['<C-f>'] = cmp.mapping.scroll_docs(4),
-			['<C-Space>'] = cmp.mapping.complete(),
-			['<C-e>'] = cmp.mapping.close(),
-			['<CR>'] = cmp.mapping.confirm({ select = true }),
-		},
-		sources = cmp.config.sources({
+	mapping = {
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.close(),
+		['<CR>'] = cmp.mapping.confirm({ select = true }),
+		['<tab>'] = cmp.mapping(function(fallback)
+		if cmp.visible() then
+			cmp.select_next_item()
+			--				elseif luasnip.expand_or_jumpable() then
+			--				  luasnip.expand_or_jump()
+		else
+			fallback()
+			end
+			end, { 'i', 's' }),
+			['<S-tab>'] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+				--				elseif luasnip.jumpable(-1) then
+				--				  luasnip.jump(-1)
+			else
+				fallback()
+				end
+				end, { 'i', 's' }),
+				},
+			sources = cmp.config.sources({
 			{ name = 'nvim_lsp' },
 			-- { name = 'vsnip' }, -- For vsnip users.
 			-- { name = 'luasnip' }, -- For luasnip users.
 			{ name = 'ultisnips' }, -- For ultisnips users.
 			-- { name = 'snippy' }, -- For snippy users.
-		}, {
+			}, {
 			{ name = 'buffer' },
+			})
 		})
-	})
 
 	-- Setup lspconfig.
 	local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-	require('lspconfig')['texlab'].setup { capabilities = capabilities }
 
 	local function on_attach(client, bufnr)
-		local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-		local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-		buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
-		buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
-		buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+	local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+	buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
+	buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
+	buf_set_keymap('n', '<RightMouse>', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
+	buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 	end
+
+	require('lspconfig')['pyright'].setup({ capabilities = capabilities, on_attach = on_attach })
+
+	require('lspconfig')['texlab'].setup({ capabilities = capabilities, on_attach = on_attach })
+
+	require('rust-tools').setup({ server = {capabilities = capabilities, on_attach = on_attach } })
+
 	require('lean').setup{
-		-- Enable the Lean language server(s)?
-		--
-		-- false to disable, otherwise should be a table of options to pass to
-		--	`leanls` and/or `lean3ls`.
-		--
-		-- See https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#leanls for details.
+	-- Enable the Lean language server(s)?
+	--
+	-- false to disable, otherwise should be a table of options to pass to
+	--	`leanls` and/or `lean3ls`.
+	--
+	-- See https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#leanls for details.
 
-		-- Lean 4
-		lsp = { on_attach = on_attach },
+	-- Lean 4
+	lsp = { on_attach = on_attach },
 
-		-- Lean 3
-		lsp3 = { on_attach = on_attach },
+	-- Lean 3
+	lsp3 = { on_attach = on_attach },
 
-		-- What filetype should be associated with standalone Lean files?
-		-- Can be set to "lean3" if you prefer that default.
-		-- Having a leanpkg.toml or lean-toolchain file should always mean
-		-- autodetection works correctly.
-		ft = { default = "lean3" },
+	-- What filetype should be associated with standalone Lean files?
+	-- Can be set to "lean3" if you prefer that default.
+	-- Having a leanpkg.toml or lean-toolchain file should always mean
+	-- autodetection works correctly.
+	ft = { default = "lean3" },
 
-		-- Abbreviation support
-		abbreviations = {
-			-- Set one of the following to true to enable abbreviations
-			builtin = true, -- built-in expander
-			compe = false, -- nvim-compe source
-			snippets = false, -- snippets.nvim source
-			-- additional abbreviations:
-			extra = {
-				-- Add a \wknight abbreviation to insert ♘
-				--
-				-- Note that the backslash is implied, and that you of
-				-- course may also use a snippet engine directly to do
-				-- this if so desired.
-				wknight = '♘',
+	-- Abbreviation support
+	abbreviations = {
+		-- Set one of the following to true to enable abbreviations
+		builtin = true, -- built-in expander
+		compe = false, -- nvim-compe source
+		snippets = false, -- snippets.nvim source
+		-- additional abbreviations:
+		extra = {
+			-- Add a \wknight abbreviation to insert ♘
+			--
+			-- Note that the backslash is implied, and that you of
+			-- course may also use a snippet engine directly to do
+			-- this if so desired.
+			wknight = '♘',
 			},
-			-- Change if you don't like the backslash
-			-- (comma is a popular choice on French keyboards)
-			leader = '\\',
+		-- Change if you don't like the backslash
+		-- (comma is a popular choice on French keyboards)
+		leader = '\\',
 		},
 
-		-- Enable suggested mappings?
-		--
-		-- false by default, true to enable
-		mappings = true,
+	-- Enable suggested mappings?
+	--
+	-- false by default, true to enable
+	mappings = true,
 
-		-- Infoview support
-		infoview = {
-			-- Automatically open an infoview on entering a Lean buffer?
-			autoopen = true,
-			-- Set the infoview windows' widths
-			width = 30,
+	-- Infoview support
+	infoview = {
+		-- Automatically open an infoview on entering a Lean buffer?
+		autoopen = true,
+		-- Set the infoview windows' widths
+		width = 30,
 		},
 
-		-- Progress bar support
-		progress_bars = {
-			-- Enable the progress bars?
-			enable = true,
-			-- Use a different priority for the signs
-			priority = 10,
+	-- Progress bar support
+	progress_bars = {
+		-- Enable the progress bars?
+		enable = true,
+		-- Use a different priority for the signs
+		priority = 10,
 		},
-    }
+	}
 EOF
 endif
