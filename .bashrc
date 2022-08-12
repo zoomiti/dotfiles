@@ -22,6 +22,7 @@ alias xp="xprop | awk '/^WM_CLASS/{sub(/.* =/, \"instance:\"); sub(/,/, \"\nclas
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
+alias gp='git push'
 
 alias nvcfg='nvim ~/.config/nvim/init.vim'
 
@@ -60,6 +61,14 @@ ls () {
     fi
 }
 
+vicd () {
+	dst="$(command vifm --choose-dir - . "$@")"
+	if [ -z "$dst" ] ; then
+		echo 'Directory picking cancelled/failed'
+	fi
+	cd "$dst"
+}
+
 PS1='[\u@\h \W]\$ '
 
 bind '"\e[A": history-search-backward'
@@ -74,3 +83,6 @@ export PATH="$HOME/.elan/bin:$PATH"
 #        PROMPT_COMMAND='echo -ne "\033]0;$PWD\007"'
 #    ;;
 #esac
+
+# Set up Node Version Manager
+source /usr/share/nvm/init-nvm.sh
