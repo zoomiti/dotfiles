@@ -82,8 +82,8 @@
 *cursorColor:  #f2a97d
 
 ! black
-*color0:       #41444a
-*color8:       #373b41
+*color0:       #2E2828
+*color8:       #423838
 
 ! red
 *color1:       #a54242
@@ -110,8 +110,8 @@
 *color14:      #8abeb7
 
 ! white
-*color7:       #707880
-*color15:      #c5c8c6
+*color7:       #807970
+*color15:      #c8c6c5
 
 
 ! Transparency
