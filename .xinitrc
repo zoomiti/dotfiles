@@ -43,4 +43,5 @@ xcompmgr  &
 flameshot &
 ckb-next -b &
 dwmblocks &
+udiskie --tray &
 exec dwm
