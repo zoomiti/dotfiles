@@ -1,3 +1,4 @@
+" Plugged setup {{{
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
 	silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -73,12 +74,10 @@ Plug 'github/copilot.vim'
 endif
 
 call plug#end()
+" }}}
 
-nnoremap <Space> <nop>
-let mapleader=" "
-let maplocalleader=" "
 
-" Colors
+" Colors {{{
 if has('termguicolors')
 	if &term =~ 'alacritty'
 		set t_8f=[38;2;%lu;%lu;%lum
@@ -92,12 +91,7 @@ if has('nvim')
 endif
 colorscheme fire
 
-" Conceal options
-hi clear Conceal
-set conceallevel=2
-set concealcursor=n
-
-" LightLine config
+" LightLine config {{{
 set noshowmode
 let g:lightline = {
 	\ 'enable': {
@@ -113,25 +107,31 @@ let g:lightline = {
 	\ 	'gitbranch': 'FugitiveHead'
 	\ },
 	\ }
+" }}}
+" }}}
 
-" UltiSnips Config
+" Conceal options {{{
+hi clear Conceal
+set conceallevel=2
+set concealcursor=n
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" UltiSnips Config {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" }}}
 
-" Fugitive Config
+" Fugitive Config {{{
 nnoremap <leader>gs :G<CR>
 set updatetime=100
+" }}}
 
-nnoremap <Enter> :nohl<CR><C-l><Enter>
-nnoremap <leader>b :ls<CR>:b<Space>
-nnoremap <leader>s :ls<CR>:sb<Space>
-
-set encoding=utf-8
-
-set completeopt=menu,menuone,noselect,noinsert
-
-" VIFM
+" VIFM {{{
 let g:loaded_netrw       = 1
 let g:loaded_netrwPlugin = 1
 let g:vifm_replace_netrw = 1
@@ -140,9 +140,24 @@ let g:vifm_exec = "vifmrun"
 command Vex vertical VsplitVifm
 command Sex SplitVifm
 command Ex Vifm
+" }}}
+
+" Autocompile dwmblocks {{{
+if has("nvim")
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
+else
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
+endif
+" }}}
 
 " Make
 " set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
+
+" Vim Config {{{
+
+set encoding=utf-8
+
+set completeopt=menu,menuone,noselect,noinsert
 
 syntax on
 
@@ -150,12 +165,6 @@ syntax on
 " reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-" Autocompile dwmblocks
-if has("nvim")
-	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
-else
-	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
-endif
 
 " Uncomment the following to have Vim load indentation rules and plugins
 " according to the detected filetype.
@@ -182,6 +191,14 @@ set number              " Enable line numbers
 set relativenumber      " Enable relative line numbers
 set title				" Changes terminal title when started
 set scrolloff=15
+
+" Vim remaps {{{
+nnoremap <Space> <nop>
+let mapleader=" "
+let maplocalleader=" "
+nnoremap <Enter> :nohl<CR><C-l><Enter>
+nnoremap <leader>b :ls<CR>:b<Space>
+nnoremap <leader>s :ls<CR>:sb<Space>
 
 noremap ; l
 noremap l k
@@ -218,12 +235,16 @@ if has("nvim")
 	tnoremap <C-W><right> <C-\><C-N><C-W><right>
 endif
 
+" }}}
+
+" }}}
+
 " Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
 	source /etc/vim/vimrc.local
 endif
 
-" LSP Setup
+" LSP Setup {{{
 
 if has("nvim")
 	lua << EOF
@@ -408,3 +429,5 @@ if has("nvim")
 	}
 EOF
 endif
+
+" }}}
