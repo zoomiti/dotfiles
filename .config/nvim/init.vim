@@ -76,83 +76,6 @@ endif
 call plug#end()
 " }}}
 
-
-" Colors {{{
-if has('termguicolors')
-	if &term =~ 'alacritty'
-		set t_8f=[38;2;%lu;%lu;%lum
-		set t_8b=[48;2;%lu;%lu;%lum
-	endif
-	set termguicolors
-endif
-let g:dark_transp_bg = 1
-if has('nvim')
-	au ColorScheme * hi Normal ctermbg=none guibg=none|hi LineNr guibg=none ctermbg=none|hi Folded guibg=none ctermbg=none|hi NonText guibg=none ctermbg=none|hi SpecialKey guibg=none ctermbg=none|hi VertSplit guibg=none ctermbg=none|hi SignColumn guibg=none ctermbg=none|hi EndOfBuffer guibg=none ctermbg=none
-endif
-colorscheme fire
-
-" LightLine config {{{
-set noshowmode
-let g:lightline = {
-	\ 'enable': {
-	\ 	'statusline': 1,
-	\ 	'tabline': 1,
-	\ },
-	\ 'colorscheme': 'fire',
-	\ 'active' : {
-	\ 'left' : [ [ 'mode', 'paste' ],
-	\            [ 'readonly', 'gitbranch', 'filename', 'modified' ]]
-	\ },
-	\ 'component_function': {
-	\ 	'gitbranch': 'FugitiveHead'
-	\ },
-	\ }
-" }}}
-" }}}
-
-" Conceal options {{{
-hi clear Conceal
-set conceallevel=2
-set concealcursor=n
-augroup filetype_vim
-    autocmd!
-    autocmd FileType vim setlocal foldmethod=marker
-augroup END
-" }}}
-
-" UltiSnips Config {{{
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-" }}}
-
-" Fugitive Config {{{
-nnoremap <leader>gs :G<CR>
-set updatetime=100
-" }}}
-
-" VIFM {{{
-let g:loaded_netrw       = 1
-let g:loaded_netrwPlugin = 1
-let g:vifm_replace_netrw = 1
-let g:vifm_embed_split = 1
-let g:vifm_exec = "vifmrun"
-command Vex vertical VsplitVifm
-command Sex SplitVifm
-command Ex Vifm
-" }}}
-
-" Autocompile dwmblocks {{{
-if has("nvim")
-	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
-else
-	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
-endif
-" }}}
-
-" Make
-" set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
-
 " Vim Config {{{
 
 set encoding=utf-8
@@ -238,6 +161,99 @@ endif
 " }}}
 
 " }}}
+
+" Colors {{{
+if has('termguicolors')
+	if &term =~ 'alacritty'
+		set t_8f=[38;2;%lu;%lu;%lum
+		set t_8b=[48;2;%lu;%lu;%lum
+	endif
+	set termguicolors
+endif
+let g:dark_transp_bg = 1
+if has('nvim')
+	au ColorScheme * hi Normal ctermbg=none guibg=none|hi LineNr guibg=none ctermbg=none|hi Folded guibg=none ctermbg=none|hi NonText guibg=none ctermbg=none|hi SpecialKey guibg=none ctermbg=none|hi VertSplit guibg=none ctermbg=none|hi SignColumn guibg=none ctermbg=none|hi EndOfBuffer guibg=none ctermbg=none
+endif
+colorscheme fire
+" }}}
+
+" LightLine config {{{
+set noshowmode
+let g:lightline = {
+	\ 'enable': {
+	\ 	'statusline': 1,
+	\ 	'tabline': 1,
+	\ },
+	\ 'colorscheme': 'fire',
+	\ 'active' : {
+	\ 'left' : [ [ 'mode', 'paste' ],
+	\            [ 'readonly', 'branch', 'filename', 'modified' ]]
+	\ },
+	\ 'component_function': {
+	\ 	'branch': 'LightlineBranch',
+	\	'filename': 'LightlineFilename',
+	\	'readonly': 'LightlineReadonly',
+	\ },
+	\ }
+
+function! LightlineFilename()
+  return &filetype ==# 'fugitive' ? fugitive#statusline() :
+        \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+endfunction
+
+function! LightlineReadonly()
+  return &readonly && &filetype !~# '\v(help|fugitive)' ? 'RO' : ''
+endfunction
+
+function! LightlineBranch()
+	return &filetype ==# 'fugitive' ? '' : FugitiveHead()
+endfunction
+
+" }}}
+
+" Conceal options {{{
+hi clear Conceal
+set conceallevel=2
+set concealcursor=n
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" UltiSnips Config {{{
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" }}}
+
+" Fugitive Config {{{
+nnoremap <leader>gs :G<CR>
+set updatetime=100
+" }}}
+
+" VIFM {{{
+let g:loaded_netrw       = 1
+let g:loaded_netrwPlugin = 1
+let g:vifm_replace_netrw = 1
+let g:vifm_embed_split = 1
+let g:vifm_exec = "vifmrun"
+command Vex vertical VsplitVifm
+command Sex SplitVifm
+command Ex Vifm
+" }}}
+
+" Autocompile dwmblocks {{{
+if has("nvim")
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h :term cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid -f dwmblocks > /dev/null 2> /dev/null ; }
+else
+	autocmd BufWritePost ~/desktop/dwmblocks/blocks.h !cd ~/desktop/dwmblocks/; sudo make install && { killall -q dwmblocks;setsid dwmblocks > /dev/null 2> /dev/null & }
+endif
+" }}}
+
+" Make
+" set makeprg=make\ --silent\ 2>&1\ \\\|\ grep\ -E\ \"^([^:\\S]+):\\S+:.+\"
+
 
 " Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
