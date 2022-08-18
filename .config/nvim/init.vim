@@ -5,7 +5,8 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin()
-Plug 'vim-airline/vim-airline'
+" Lightline
+Plug 'itchyny/lightline.vim'
 
 " CSS-Color
 Plug 'ap/vim-css-color'
@@ -95,6 +96,23 @@ colorscheme fire
 hi clear Conceal
 set conceallevel=2
 set concealcursor=n
+
+" LightLine config
+set noshowmode
+let g:lightline = {
+	\ 'enable': {
+	\ 	'statusline': 1,
+	\ 	'tabline': 1,
+	\ },
+	\ 'colorscheme': 'fire',
+	\ 'active' : {
+	\ 'left' : [ [ 'mode', 'paste' ],
+	\            [ 'readonly', 'gitbranch', 'filename', 'modified' ]]
+	\ },
+	\ 'component_function': {
+	\ 	'gitbranch': 'FugitiveHead'
+	\ },
+	\ }
 
 " UltiSnips Config
 let g:UltiSnipsExpandTrigger="<tab>"
