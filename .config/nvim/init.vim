@@ -54,6 +54,9 @@ if has("nvim")
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/nvim-cmp'  " For LSP completion
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-nvim-lua'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'
@@ -355,12 +358,14 @@ if has("nvim")
 				},
 			sources = cmp.config.sources({
 			{ name = 'nvim_lsp' },
+			{ name = 'nvim_lua' },
 			-- { name = 'vsnip' }, -- For vsnip users.
 			-- { name = 'luasnip' }, -- For luasnip users.
 			{ name = 'ultisnips' }, -- For ultisnips users.
 			-- { name = 'snippy' }, -- For snippy users.
+			{ name = 'path' },
 			}, {
-			{ name = 'buffer' },
+			{ name = 'buffer', keyword_length = 5},
 			})
 		})
 
