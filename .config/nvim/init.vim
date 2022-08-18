@@ -103,8 +103,11 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " Fugitive Config
 nnoremap <leader>gs :G<CR>
+set updatetime=100
 
 nnoremap <Enter> :nohl<CR><C-l><Enter>
+nnoremap <leader>b :ls<CR>:b<Space>
+nnoremap <leader>s :ls<CR>:sb<Space>
 
 set encoding=utf-8
 
