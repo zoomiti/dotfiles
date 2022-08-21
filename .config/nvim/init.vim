@@ -201,6 +201,7 @@ let g:lightline = {
 
 function! LightlineFilename()
   return &filetype ==# 'fugitive' ? fugitive#statusline() :
+  		\ &filetype ==# 'qf' ? 'QuickFix' :
         \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
 
@@ -209,7 +210,7 @@ function! LightlineReadonly()
 endfunction
 
 function! LightlineBranch()
-	return &filetype ==# 'fugitive' ? '' : FugitiveHead()
+	return &filetype !~# '\v(help|fugitive|qf)' ? FugitiveHead() : ''
 endfunction
 
 " }}}
