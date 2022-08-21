@@ -52,11 +52,15 @@ Plug 'cocopon/inspecthi.vim'
 if has("nvim")
 " LSP
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
+
 Plug 'hrsh7th/nvim-cmp'  " For LSP completion
+Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'hrsh7th/cmp-copilot'
+Plug 'onsails/lspkind.nvim'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'
@@ -323,60 +327,82 @@ if has("nvim")
 		playground = {
 			enable = true,
 			},
-		}
+		} --}}}
 	require('spellsitter').setup()
 	require'colorizer'.setup()
 
 	-- Setup nvim-cmp.
 	local cmp = require'cmp'
+	local lspkind = require'lspkind'
+	local cmp_ultisnips_mappings = require'cmp_nvim_ultisnips.mappings'
 
 	cmp.setup({
-	snippet = {
-		expand = function(args)
-		vim.fn["UltiSnips#Anon"](args.body) 
-		end,
+		snippet = {
+			expand = function(args)
+				vim.fn["UltiSnips#Anon"](args.body) 
+			end,
 		},
-	mapping = {
-		['<C-d>'] = cmp.mapping.scroll_docs(-4),
-		['<C-f>'] = cmp.mapping.scroll_docs(4),
-		['<C-Space>'] = cmp.mapping.complete(),
-		['<C-e>'] = cmp.mapping.close(),
-		['<CR>'] = cmp.mapping.confirm({ select = true }),
-		['<tab>'] = cmp.mapping(function(fallback)
-		if cmp.visible() then
-			cmp.select_next_item()
-		else
-			fallback()
-			end
+		mapping = {
+			['<C-d>'] = cmp.mapping.scroll_docs(-4),
+			['<C-f>'] = cmp.mapping.scroll_docs(4),
+			['<C-Space>'] = cmp.mapping.complete(),
+			['<C-e>'] = cmp.mapping.close(),
+			['<CR>'] = cmp.mapping.confirm({ select = true }),
+			['<tab>'] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_next_item()
+				else
+					cmp_ultisnips_mappings.expand_or_jump_forwards(fallback)
+				end
 			end, { 'i', 's' }),
 			['<S-tab>'] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			else
-				fallback()
+				if cmp.visible() then
+					cmp.select_prev_item()
+				else
+					cmp_ultisnips_mappings.jump_backwards(fallback)
 				end
-				end, { 'i', 's' }),
-				},
-			sources = cmp.config.sources({
+			end, { 'i', 's' }),
+		},
+		sources = cmp.config.sources({
+			{ name = 'copilot' },
 			{ name = 'nvim_lsp' },
 			{ name = 'nvim_lua' },
 			{ name = 'ultisnips' },
 			{ name = 'path' },
-			}, {
+		}, {
 			{ name = 'buffer', keyword_length = 5},
-			})
-		})
+		}),
+		formatting = {
+			format = lspkind.cmp_format {
+				with_text = true,
+				menu = {
+					buffer = "[buf]",
+					nvim_lsp = "[LSP]",
+					nvim_lua = "[api]",
+					path = "[path]",
+					ultisnips = "[snip]",
+					copilot = "[cop]",
+				},
+			},
+		},
+	})
 
 	-- Setup lspconfig.
 	local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 	local function on_attach(client, bufnr)
-	local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-	buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
-	buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
-	buf_set_keymap('n', '<RightMouse>', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
-	buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+		local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+		local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+		buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
+		buf_set_keymap('n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', {noremap = true})
+		buf_set_keymap('n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', {noremap = true})
+		buf_set_keymap('n', '<leader>r', '<Cmd>lua vim.lsp.buf.rename()<CR>', {noremap = true})
+		buf_set_keymap('n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', {noremap = true})
+		buf_set_keymap('n', '[d', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', {noremap = true})
+		buf_set_keymap('n', '<C-Space>', '<Cmd>lua vim.lsp.buf.code_action()<CR>', {noremap = true})
+		buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
+		buf_set_keymap('n', '<RightMouse>', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
+		buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 	end
 
 	require('lspconfig')['pyright'].setup({ capabilities = capabilities, on_attach = on_attach })
