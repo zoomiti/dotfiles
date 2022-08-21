@@ -122,7 +122,7 @@ set scrolloff=15
 nnoremap <Space> <nop>
 let mapleader=" "
 let maplocalleader=" "
-nnoremap <Enter> :nohl<CR><C-l><Enter>
+nnoremap <silent> <Enter> :nohl<CR><Enter>
 nnoremap <leader>b :ls<CR>:b<Space>
 nnoremap <leader>s :ls<CR>:sb<Space>
 
