@@ -32,5 +32,6 @@ window:
 
 font:
   normal:
-    family: Jetbrains Mono
+    family: 'JetbrainsMono Nerd Font Mono'
+    #    family: Jetbrains Mono
 
