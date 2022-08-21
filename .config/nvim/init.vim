@@ -238,6 +238,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " Fugitive Config {{{
 nnoremap <leader>gs :G<CR>
+nnoremap <leader>gp :G push<CR>
 set updatetime=100
 " }}}
 
