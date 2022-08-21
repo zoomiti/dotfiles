@@ -281,7 +281,7 @@ endif
 if has("nvim")
 	lua << EOF
 	-- Setup treesitter
-	require'nvim-treesitter.configs'.setup {
+	require'nvim-treesitter.configs'.setup { --{{{
 		-- A list of parser names, or "all"
 		ensure_installed = { "c", "lua", "rust", "vim" },
 
@@ -412,7 +412,7 @@ if has("nvim")
 
 	require('rust-tools').setup({ server = {capabilities = capabilities, on_attach = on_attach } })
 
-	require('lean').setup{
+	require('lean').setup{ --{{{
 	-- Enable the Lean language server(s)?
 	--
 	-- false to disable, otherwise should be a table of options to pass to
@@ -472,7 +472,7 @@ if has("nvim")
 		-- Use a different priority for the signs
 		priority = 10,
 		},
-	}
+	} -- }}}
 EOF
 endif
 
