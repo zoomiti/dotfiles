@@ -174,9 +174,10 @@ if has('termguicolors')
 	set termguicolors
 endif
 let g:dark_transp_bg = 1
-if has('nvim')
-	au ColorScheme * hi Normal ctermbg=none guibg=none|hi LineNr guibg=none ctermbg=none|hi Folded guibg=none ctermbg=none|hi NonText guibg=none ctermbg=none|hi SpecialKey guibg=none ctermbg=none|hi VertSplit guibg=none ctermbg=none|hi SignColumn guibg=none ctermbg=none|hi EndOfBuffer guibg=none ctermbg=none
-endif
+" Deprecated becase of last line
+" if has('nvim')
+" 	au ColorScheme * hi Normal ctermbg=none guibg=none|hi LineNr guibg=none ctermbg=none|hi Folded guibg=none ctermbg=none|hi NonText guibg=none ctermbg=none|hi SpecialKey guibg=none ctermbg=none|hi VertSplit guibg=none ctermbg=none|hi SignColumn guibg=none ctermbg=none|hi EndOfBuffer guibg=none ctermbg=none
+" endif
 colorscheme fire
 " }}}
 
