@@ -77,6 +77,7 @@ bind '"\e[B": history-search-forward'
 complete -cf sudo
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.elan/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 #case $TERM in
 #    rxvt|*term|st*)
