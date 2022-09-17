@@ -2,7 +2,7 @@
 # ~/.bash_profile
 #
 
-export TERMINAL="st"
+export TERMINAL="alacritty"
 export EDITOR="nvim"
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
