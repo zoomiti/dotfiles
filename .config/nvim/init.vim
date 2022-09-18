@@ -58,7 +58,7 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lua'
-Plug 'hrsh7th/cmp-copilot'
+" Plug 'hrsh7th/cmp-copilot'
 Plug 'onsails/lspkind.nvim'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
@@ -83,7 +83,7 @@ Plug 'lewis6991/spellsitter.nvim'
 Plug 'nvim-treesitter/playground'
 
 " Copilot
-Plug 'github/copilot.vim'
+" Plug 'github/copilot.vim'
 endif
 
 call plug#end()
@@ -400,7 +400,7 @@ if has("nvim")
 					nvim_lua = "[api]",
 					path = "[path]",
 					ultisnips = "[snip]",
-					copilot = "[cop]",
+					--copilot = "[cop]",
 				},
 			},
 		},
