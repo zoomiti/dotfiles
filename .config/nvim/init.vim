@@ -72,7 +72,7 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'mfussenegger/nvim-dap'
 
 " Lean requires nvim
-Plug 'Julian/lean.nvim'
+" Plug 'Julian/lean.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'andrewradev/switch.vim'  " For Lean switch support
 Plug 'norcalli/nvim-colorizer.lua' " For colorizing
@@ -430,6 +430,7 @@ if has("nvim")
 
 	require('rust-tools').setup({ server = {capabilities = capabilities, on_attach = on_attach } })
 
+	--[[
 	require('lean').setup{ --{{{
 	-- Enable the Lean language server(s)?
 	--
@@ -491,6 +492,7 @@ if has("nvim")
 		priority = 10,
 		},
 	} -- }}}
+	--]]
 EOF
 endif
 
