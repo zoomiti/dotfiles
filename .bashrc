@@ -43,7 +43,7 @@ vicd () {
 
 if command -v rpg-cli &> /dev/null
 then
-	PS1="[\u@\h ](\W)\n$(CLICOLOR_FORCE=1 rpg-cli stat -q | sed 's/@.*//' | sed 's/\(\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[][\\@A-Z^_`a-z{|}~]\)/\\[\1\\]/g')\$ "
+	PS1='[\u@\h ](\W)\n$(CLICOLOR_FORCE=1 rpg-cli stat -q | sed "s/@.*//" | sed -r "s/(\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK])/\[\1\]/g" )\$ '
 	alias rpg-battle="rpg-cli cd -f . && rpg-cli battle"
 
 	alias rm="rpg-battle && rm"
