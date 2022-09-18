@@ -62,6 +62,12 @@ Plug 'hrsh7th/cmp-copilot'
 Plug 'onsails/lspkind.nvim'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
+" Telescope
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'nvim-telescope/telescope-ui-select.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
+
 " Debugging
 Plug 'mfussenegger/nvim-dap'
 
@@ -127,8 +133,15 @@ nnoremap <Space> <nop>
 let mapleader=" "
 let maplocalleader=" "
 nnoremap <silent> <Enter> :nohl<CR><Enter>
-nnoremap <leader>b :ls<CR>:b<Space>
-nnoremap <leader>s :ls<CR>:sb<Space>
+if has('nvim') 
+	nnoremap <leader>b <cmd>Telescope buffers<CR>
+	nnoremap  <cmd>lua require("telescope.builtin").current_buffer_fuzzy_find(require('telescope.themes').get_ivy())<CR>
+	nnoremap <leader>f <cmd>Telescope find_files<CR>
+else
+	nnoremap <leader>b <cmd>ls<CR>:b<Space>
+	nnoremap <leader>s <cmd>ls<CR>:sb<Space>
+endif
+
 
 noremap ; l
 noremap l k
@@ -280,6 +293,11 @@ endif
 
 if has("nvim")
 	lua << EOF
+	require('telescope').setup{}
+
+	require('telescope').load_extension('fzf')
+	
+	
 	-- Setup treesitter
 	require'nvim-treesitter.configs'.setup { --{{{
 		-- A list of parser names, or "all"
