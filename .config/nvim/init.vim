@@ -135,7 +135,7 @@ let maplocalleader=" "
 nnoremap <silent> <Enter> :nohl<CR><Enter>
 if has('nvim') 
 	nnoremap <leader>b <cmd>Telescope buffers<CR>
-	nnoremap  <cmd>lua require("telescope.builtin").current_buffer_fuzzy_find(require('telescope.themes').get_ivy())<CR>
+	nnoremap <C-/> <cmd>lua require("telescope.builtin").current_buffer_fuzzy_find(require('telescope.themes').get_ivy())<CR>
 	nnoremap <leader>f <cmd>Telescope find_files<CR>
 else
 	nnoremap <leader>b <cmd>ls<CR>:b<Space>
@@ -148,6 +148,9 @@ noremap l k
 noremap k j
 noremap j h
 noremap h ;
+
+nnoremap [q <cmd>:cprev<CR>
+nnoremap ]q <cmd>:cnext<CR>
 
 noremap <C-W>j <C-\><C-N><C-W>h
 noremap <C-W>k <C-\><C-N><C-W>j
@@ -407,15 +410,16 @@ if has("nvim")
 	})
 
 	-- Setup lspconfig.
-	local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+	local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 	local function on_attach(client, bufnr)
 		local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 		local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 		buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
-		buf_set_keymap('n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', {noremap = true})
+		-- buf_set_keymap('n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', {noremap = true})
 		buf_set_keymap('n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', {noremap = true})
 		buf_set_keymap('n', '<leader>r', '<Cmd>lua vim.lsp.buf.rename()<CR>', {noremap = true})
+		buf_set_keymap('n', '<leader>d', '<Cmd>Trouble workspace_diagnostics<CR>', {noremap = true})
 		buf_set_keymap('n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', {noremap = true})
 		buf_set_keymap('n', '[d', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', {noremap = true})
 		buf_set_keymap('n', '<C-Space>', '<Cmd>lua vim.lsp.buf.code_action()<CR>', {noremap = true})
