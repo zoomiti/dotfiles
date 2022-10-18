@@ -9,7 +9,7 @@ shopt -s autocd
 shopt -s cdspell
 shopt -s dirspell
 
-alias vim='nvim'
+alias nv='nvim'
 
 alias diff='diff --color=auto'
 alias ip='ip -color=auto'
@@ -43,7 +43,7 @@ vicd () {
 
 if command -v rpg-cli &> /dev/null
 then
-	PS1='[\u@\h ](\W)\n$(CLICOLOR_FORCE=1 rpg-cli stat -q | sed "s/@.*//" | sed -r "s/(\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK])/\[\1\]/g" )\$ '
+	PS1='\[\e[1;97m\][\[\e[0;93m\]\u\[\e[0;36m\]@\[\e[0;33m\]\h\[\e[1;97m\]](\[\e[0;34m\]\W\[\e[1;97m\])\n$(CLICOLOR_FORCE=1 rpg-cli stat -q | sed -r "s/@.*//" | sed "s/\\x1b\\[0m/\x1b[0;97m/g" | sed -r "s/(\\x1B\\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK])/\[\1\]/g" )\[\e[0;33m\]\$\[\e[m\] '
 	alias rpg-battle="rpg-cli cd -f . && rpg-cli battle"
 
 	alias rm="rpg-battle && rm"
@@ -54,6 +54,18 @@ then
 	alias cp="rpg-battle && cp"
 	alias chown="rpg-battle && chown"
 	alias chmod="rpg-battle && chmod"
+
+	bcd () {
+		builtin cd "$@"
+		command ls --color=auto
+		if [[ $PWD == ~ ]] ; then
+			rpg-cli cd -f ~
+		else
+			rpg-cli cd -f . 
+			rpg-cli battle --bribe
+		fi
+	}
+	
 	cd () {
 		builtin cd "$@"
 		command ls --color=auto
@@ -93,3 +105,4 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # Set up Node Version Manager
 source /usr/share/nvm/init-nvm.sh
+bind 'set completion-ignore-case on'
