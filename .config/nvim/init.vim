@@ -306,7 +306,7 @@ if filereadable("/etc/vim/vimrc.local")
 	source /etc/vim/vimrc.local
 endif
 
-" LSP Setup {{{
+" Lua Setup {{{
 
 if has("nvim")
 	lua << EOF
@@ -450,6 +450,8 @@ if has("nvim")
 		buf_set_keymap('n', '<RightMouse>', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true})
 		buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 	end
+
+	require('lspconfig')['ccls'].setup({ capabilities = capabilities, on_attach = on_attach })
 
 	require('lspconfig')['pyright'].setup({ capabilities = capabilities, on_attach = on_attach })
 
