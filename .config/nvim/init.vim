@@ -6,6 +6,9 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin()
+" auto pairs
+Plug 'LunarWatcher/auto-pairs'
+
 " Lightline
 Plug 'itchyny/lightline.vim'
 
@@ -58,9 +61,13 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'f3fora/cmp-spell'
 " Plug 'hrsh7th/cmp-copilot'
 Plug 'onsails/lspkind.nvim'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+" Diagnostics
+Plug 'folke/trouble.nvim'
 
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
@@ -223,15 +230,16 @@ let g:lightline = {
 function! LightlineFilename()
   return &filetype ==# 'fugitive' ? fugitive#statusline() :
   		\ &filetype ==# 'qf' ? 'QuickFix' :
+  		\ &filetype ==# 'Trouble' ? 'Trouble' :
         \ expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
 
 function! LightlineReadonly()
-  return &readonly && &filetype !~# '\v(help|fugitive)' ? 'RO' : ''
+  return &readonly && &filetype !~# '\v(help|fugitive|Trouble)' ? 'RO' : ''
 endfunction
 
 function! LightlineBranch()
-	return &filetype !~# '\v(help|fugitive|qf)' ? FugitiveHead() : ''
+	return &filetype !~# '\v(help|fugitive|qf|Trouble)' ? FugitiveHead() : ''
 endfunction
 
 " }}}
@@ -274,6 +282,12 @@ command Ex Vifm
 let g:vim_markdown_frontmatter = 1
 
 " }}}
+
+" Auto-Pairs config {{{
+let g:AutoPairsMapBS = 1
+
+" }}}
+
 
 " Autocompile dwmblocks {{{
 if has("nvim")
@@ -390,6 +404,14 @@ if has("nvim")
 			{ name = 'nvim_lsp' },
 			{ name = 'nvim_lua' },
 			{ name = 'ultisnips' },
+			{ name = 'spell',
+			  option = {
+				  enable_in_context = function()
+                      return true --require('cmp.config.context').in_treesitter_capture('spell')
+                  end,
+			  },
+			  keyword_length = 3,
+			},
 			{ name = 'path' },
 		}, {
 			{ name = 'buffer', keyword_length = 5},
@@ -403,6 +425,7 @@ if has("nvim")
 					nvim_lua = "[api]",
 					path = "[path]",
 					ultisnips = "[snip]",
+					spell = "[spell]",
 					--copilot = "[cop]",
 				},
 			},
@@ -497,6 +520,12 @@ if has("nvim")
 		},
 	} -- }}}
 	--]]
+
+	require("trouble").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+	}
 EOF
 endif
 
