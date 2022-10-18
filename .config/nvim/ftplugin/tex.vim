@@ -1,11 +1,9 @@
 let g:vimtex_compiler_latexmk = {
         \ 'backend': 'nvim',
-        \ 'background' : 0,
+        \ 'background' : 1,
         \ 'build_dir' : 'latex_build',
         \ 'continuous' : 1,
         \ 'options' : [
-        \   '-pdfdvi',
-        \   '-pdflatex="xelatex -shell-escape %O %S"',
         \   '-verbose',
         \   '-file-line-error',
         \   '-synctex=1',
