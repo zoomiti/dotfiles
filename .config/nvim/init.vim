@@ -274,9 +274,9 @@ let g:vifm_replace_netrw = 1
 let g:vifm_embed_split = 1
 let g:vifm_exec = "vifmrun"
 nnoremap <silent> gx :!xdg-open <c-r>=shellescape(expand('<cfile>'))<cr><cr>
-command Vex vertical VsplitVifm
-command Sex SplitVifm
-command Ex Vifm
+command! Vex vertical VsplitVifm
+command! Sex SplitVifm
+command! Ex Vifm
 " }}}
 
 " Markdown config {{{
