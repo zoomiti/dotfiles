@@ -73,6 +73,7 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'nvim-telescope/telescope-ui-select.nvim'
+Plug 'nvim-neorg/neorg-telescope'
 Plug 'kyazdani42/nvim-web-devicons'
 
 " Debugging
@@ -88,6 +89,9 @@ Plug 'norcalli/nvim-colorizer.lua' " For colorizing
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'lewis6991/spellsitter.nvim'
 Plug 'nvim-treesitter/playground'
+
+" Neorg
+Plug 'nvim-neorg/neorg'
 
 " Copilot
 " Plug 'github/copilot.vim'
@@ -404,6 +408,7 @@ if has("nvim")
 		sources = cmp.config.sources({
 			{ name = 'copilot' },
 			{ name = 'nvim_lsp' },
+			{ name = 'neorg' },
 			{ name = 'nvim_lua' },
 			{ name = 'ultisnips' },
 			{ name = 'spell',
@@ -529,6 +534,42 @@ if has("nvim")
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
+	}
+
+	require('neorg').setup {
+		load = {
+        	["core.defaults"] = {},
+			["core.norg.completion"] = {
+				config = { -- Note that this table is optional and doesn't need to be provided
+					engine = 'nvim-cmp',
+				}
+			},
+			["core.integrations.nvim-cmp"] = {
+				config = { -- Note that this table is optional and doesn't need to be provided
+					-- Configuration here
+				}
+			},
+			["core.norg.concealer"] = {
+				config = { -- Note that this table is optional and doesn't need to be provided
+					-- Configuration here
+				}
+			},
+			["core.norg.dirman"] = {
+				config = {
+					workspaces = {
+						example_gtd = "~/GitHub/example_workspaces/gtd",
+						neorg = "~/neorg",
+					},
+					default_workspace = "neorg",
+				},
+			},
+			["core.gtd.base"] = {
+				config = {
+					workspace = "neorg",
+				},
+			},
+			["core.integrations.telescope"] = {}, -- Enable the telescope module
+    	}
 	}
 EOF
 endif
