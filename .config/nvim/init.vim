@@ -464,7 +464,14 @@ if has("nvim")
 
 	require('lspconfig')['texlab'].setup({ capabilities = capabilities, on_attach = on_attach })
 
-	require('rust-tools').setup({ server = {capabilities = capabilities, on_attach = on_attach } })
+	require('rust-tools').setup({ server = {capabilities = capabilities, 
+		on_attach = function(client, bufnr) 
+			on_attach(client, bufnr);
+			local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+			buf_set_keymap('n', '<leader>c', '<Cmd>lua require\'rust-tools\'.open_cargo_toml.open_cargo_toml()<CR>', {noremap = true})
+		end 
+		}
+	})
 
 	--[[
 	require('lean').setup{ --{{{
