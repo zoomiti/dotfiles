@@ -27,3 +27,4 @@ let g:vimtex_syntax_conceal = {
           \ 'sections': 1,
           \ 'styles': 1,
           \}
+set textwidth=80
