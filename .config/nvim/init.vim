@@ -95,6 +95,8 @@ Plug 'nvim-neorg/neorg'
 
 " Copilot
 " Plug 'github/copilot.vim'
+
+Plug 'folke/which-key.nvim'
 endif
 
 call plug#end()
@@ -577,6 +579,12 @@ if has("nvim")
 			},
 			["core.integrations.telescope"] = {}, -- Enable the telescope module
     	}
+	}
+
+	require("which-key").setup {
+		-- your configuration comes here
+		-- or leave it empty to use the default settings
+		-- refer to the configuration section below
 	}
 EOF
 endif
