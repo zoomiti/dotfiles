@@ -36,12 +36,15 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 export AWT_TOOLKIT=MToolkit 
 wmname LG3D
 
+nvidia-settings --load-config-only &
+blueberry-tray &
 playerctld >/home/zoomiti/.playerlog&
 numlockx &
-nitrogen --restore &
 xcompmgr  &
 flameshot &
 ckb-next -b &
 dwmblocks &
 udiskie --tray &
+# mathpix-snipping-tool &
+nitrogen --restore &
 exec dwm
