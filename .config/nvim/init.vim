@@ -33,10 +33,12 @@ Plug 'airblade/vim-gitgutter'
 Plug 'lervag/vimtex'
 
 " Rust
-Plug 'rust-lang/rust.vim'
-let g:rustfmt_autosave = 1
 if has("nvim")
-	Plug 'simrat39/rust-tools.nvim' " Adds extra functionality over rust analyzer
+	Plug 'mrcjkb/rustaceanvim'
+	Plug 'rayliwell/nvim-ts-autotag'
+else
+	Plug 'rust-lang/rust.vim'
+	let g:rustfmt_autosave = 1
 endif
 
 " Markdown
@@ -49,18 +51,27 @@ Plug 'dhruvasagar/vim-table-mode'
 Plug 'zoomiti/firewatch'
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 Plug 'sjl/badwolf'
-Plug 'lifepillar/vim-colortemplate'
-Plug 'cocopon/inspecthi.vim'
+if !has("nvim")
+	Plug 'lifepillar/vim-colortemplate'
+endif
 
 if has("nvim")
+" Neoconf
+Plug 'folke/neoconf.nvim'
+
 " LSP
 Plug 'neovim/nvim-lspconfig'
 
-Plug 'hrsh7th/nvim-cmp'  " For LSP completion
+Plug 'andythigpen/nvim-coverage'
+
+" Cmp
+Plug 'hrsh7th/nvim-cmp'  
 Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'petertriho/cmp-git'
 Plug 'f3fora/cmp-spell'
 " Plug 'hrsh7th/cmp-copilot'
 Plug 'onsails/lspkind.nvim'
@@ -88,7 +99,7 @@ Plug 'norcalli/nvim-colorizer.lua' " For colorizing
 " Tree sitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'lewis6991/spellsitter.nvim'
-Plug 'nvim-treesitter/playground'
+Plug 'rayliwell/tree-sitter-rstml'
 
 " Neorg
 Plug 'nvim-neorg/neorg'
@@ -150,9 +161,12 @@ if has('nvim')
 	nnoremap <leader>b <cmd>Telescope buffers<CR>
 	nnoremap <C-/> <cmd>lua require("telescope.builtin").current_buffer_fuzzy_find(require('telescope.themes').get_ivy())<CR>
 	nnoremap <leader>f <cmd>Telescope find_files<CR>
+	nnoremap <leader>p <cmd>Telescope git_files<CR>
+	nnoremap <leader>t <cmd>bel 15sp \| term<CR><cmd>startinsert<CR>
 else
 	nnoremap <leader>b <cmd>ls<CR>:b<Space>
 	nnoremap <leader>s <cmd>ls<CR>:sb<Space>
+	nnoremap <leader>t <cmd>bel term<CR>
 endif
 
 
@@ -318,15 +332,19 @@ endif
 
 if has("nvim")
 	lua << EOF
+	vim.loader.enable()
+	require('neoconf').setup{}
+
 	require('telescope').setup{}
 
 	require('telescope').load_extension('fzf')
+	require('telescope').load_extension('ui-select')
 	
 	
 	-- Setup treesitter
 	require'nvim-treesitter.configs'.setup { --{{{
 		-- A list of parser names, or "all"
-		ensure_installed = { "c", "lua", "rust", "vim" },
+		ensure_installed = { "c", "lua", "vim" }, --"rust"
 
 		-- Install parsers synchronously (only applied to `ensure_installed`)
 		sync_install = false,
@@ -357,7 +375,7 @@ if has("nvim")
 		incremental_selection = {
 			enable = true,
 			keymaps = {
-				init_selction = "gnn",
+				init_selection = "gnn",
 				node_incremental = "grn",
 				scope_incremental = "grc",
 				node_decremental = "grm",
@@ -373,9 +391,13 @@ if has("nvim")
 			},
 		} --}}}
 	require('spellsitter').setup()
+	require('tree-sitter-rstml').setup()
+	require('nvim-ts-autotag').setup()
+
 	require'colorizer'.setup()
 
 	-- Setup nvim-cmp.
+	-- {{{
 	local cmp = require'cmp'
 	local lspkind = require'lspkind'
 	local cmp_ultisnips_mappings = require'cmp_nvim_ultisnips.mappings'
@@ -408,8 +430,9 @@ if has("nvim")
 			end, { 'i', 's' }),
 		},
 		sources = cmp.config.sources({
-			{ name = 'copilot' },
+			{ name = 'path' },
 			{ name = 'nvim_lsp' },
+			{ name = 'nvim_lsp_signature_help' },
 			{ name = 'neorg' },
 			{ name = 'nvim_lua' },
 			{ name = 'ultisnips' },
@@ -421,10 +444,16 @@ if has("nvim")
 			  },
 			  keyword_length = 3,
 			},
-			{ name = 'path' },
+			{ name = "git" },
 		}, {
 			{ name = 'buffer', keyword_length = 5},
 		}),
+		--{{{
+		--window = {
+		--	completion = cmp.config.window.bordered(),
+		--	documentation = cmp.config.window.bordered(),
+		--},
+		--}}}
 		formatting = {
 			format = lspkind.cmp_format {
 				with_text = true,
@@ -435,21 +464,26 @@ if has("nvim")
 					path = "[path]",
 					ultisnips = "[snip]",
 					spell = "[spell]",
+					git = "[git]"
 					--copilot = "[cop]",
 				},
 			},
 		},
 	})
+	require("cmp_git").setup()
+	-- }}}
 
 	-- Setup lspconfig.
 	local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 	local function on_attach(client, bufnr)
+		vim.lsp.inlay_hint.enable(bufnr, true)
 		local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 		local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 		buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', {noremap = true})
-		-- buf_set_keymap('n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', {noremap = true})
+		buf_set_keymap('n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', {noremap = true})
 		buf_set_keymap('n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', {noremap = true})
+		buf_set_keymap('n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', {noremap = true})
 		buf_set_keymap('n', '<leader>r', '<Cmd>lua vim.lsp.buf.rename()<CR>', {noremap = true})
 		buf_set_keymap('n', '<leader>d', '<Cmd>Trouble workspace_diagnostics<CR>', {noremap = true})
 		buf_set_keymap('n', ']d', '<Cmd>lua vim.diagnostic.goto_next()<CR>', {noremap = true})
@@ -466,14 +500,49 @@ if has("nvim")
 
 	require('lspconfig')['texlab'].setup({ capabilities = capabilities, on_attach = on_attach })
 
-	require('rust-tools').setup({ server = {capabilities = capabilities, 
-		on_attach = function(client, bufnr) 
-			on_attach(client, bufnr);
-			local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-			buf_set_keymap('n', '<leader>c', '<Cmd>lua require\'rust-tools\'.open_cargo_toml.open_cargo_toml()<CR>', {noremap = true})
-		end 
-		}
-	})
+	vim.opt.exrc = true
+	vim.g.rustaceanvim = {
+		-- LSP configuration
+		server = {
+			capabilities = capabilities, 
+			on_attach = function(client, bufnr)
+				-- you can also put keymaps in here
+				on_attach(client, bufnr);
+				-- client.server_capabilities.semanticTokensProvider = nil
+				vim.api.nvim_create_autocmd({"BufWritePre"}, {pattern = {"*"}, command = "lua vim.lsp.buf.format()" })
+				local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+				buf_set_keymap('n', 'J', "<Cmd>RustLsp joinLines<CR>", {noremap = true})
+				buf_set_keymap('n', '<C-Space>', "<Cmd>RustLsp codeAction<CR>", {noremap = true})
+				buf_set_keymap('n', '<leader>c', "<Cmd>RustLsp openCargo<CR>", {noremap = true})
+				buf_set_keymap('n', 'gD', '<Cmd>RustLsp openDocs<CR>', {noremap = true})
+			end,
+			cmd = {"ra-multiplex", "client"},
+			load_vscode_settings = true,
+
+			default_settings = {
+				-- rust-analyzer language server configuration
+				['rust-analyzer'] = {
+					cargo = {
+						features = "all",
+						targetDir = true,
+					},
+					checkOnSave = true,
+					check = {
+						command = "clippy",
+						allfeatures = true,
+						extrArgs = {"--no-deps"},
+					},
+					rustfmt = {
+						overrideCommand = {"/home/zoomiti/.cargo/bin/leptosfmt", "--stdin", "--rustfmt"},
+					},
+					procMacro = {
+						enable = true
+					},
+
+				},
+			},
+		},
+	}
 
 	--[[
 	require('lean').setup{ --{{{
@@ -545,6 +614,7 @@ if has("nvim")
     -- refer to the configuration section below
 	}
 
+	--[[
 	require('neorg').setup {
 		load = {
         	["core.defaults"] = {},
@@ -580,6 +650,9 @@ if has("nvim")
 			["core.integrations.telescope"] = {}, -- Enable the telescope module
     	}
 	}
+	--]]
+
+	require("coverage").setup()
 
 	require("which-key").setup {
 		-- your configuration comes here
