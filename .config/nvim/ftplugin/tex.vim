@@ -8,7 +8,6 @@ let g:vimtex_compiler_latexmk = {
         \   '-file-line-error',
         \   '-synctex=1',
         \   '-interaction=nonstopmode',
-		\   '-shell-escape',
         \ ],
         \}
 let g:vimtex_view_method = 'zathura'
