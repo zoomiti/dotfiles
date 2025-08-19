@@ -118,3 +118,31 @@ alias ga='git add'
 alias gc='git commit'
 alias gp='git pull'
 alias gP='git push'
+
+# ---- Color definitions ----
+RESET='%F{reset}'
+
+WHITE='%F{15}'
+YELLOW='%F{11}'
+CYAN='%F{cyan}'
+ORANGE='%F{yellow}'
+BLUE='%F{blue}'
+RED='%F{red}'
+
+# ---- OSC133 support ----
+# Command start marker (before each command)
+preexec() {
+  print -n -- $'\e]133;C\e\\'
+}
+
+# Capture last exit status and send OSC 133 ;D
+precmd() {
+  LAST_STATUS=$?
+  print -n -- $'\e]133;D;'"$LAST_STATUS"$'\e\\'
+}
+
+# ---- Prompt definition ----
+PROMPT=$'%{\e]133;A\a%}'\
+"${WHITE}[${YELLOW}%n${CYAN}@${ORANGE}%m${WHITE}](${BLUE}%~${WHITE})]"\
+'$(if [[ $LAST_STATUS -eq 0 ]]; then echo "${ORANGE}\$${RESET}"; else echo "${RED}\$${RESET}"; fi)'\
+$'%{\e]133;B\a%} '
