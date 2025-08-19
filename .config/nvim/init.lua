@@ -1,6 +1,7 @@
 vim.pack.add({
 	{ src = "https://github.com/zoomiti/firewatch" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/echasnovski/mini.nvim" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mrcjkb/rustaceanvim" },
 	{ src = 'https://github.com/folke/which-key.nvim' },
@@ -9,7 +10,8 @@ vim.pack.add({
 	{ src = 'https://github.com/airblade/vim-gitgutter' },
 	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter' },
 	{ src = 'https://github.com/rayliwell/tree-sitter-rstml' },
-	{ src = 'https://github.com/Saghen/blink.cmp' }
+	{ src = 'https://github.com/Saghen/blink.cmp' },
+	{ src = 'https://github.com/stevearc/oil.nvim' },
 })
 
 vim.opt.number = true
@@ -35,6 +37,11 @@ vim.g.maplocalleader = ' '
 
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
+
+require "mini.icons".setup()
+
+require('oil').setup()
+vim.keymap.set("n", "-", vim.cmd.Oil, { desc = "Open Parent Directory" })
 
 require "mini.pick".setup()
 vim.keymap.set('n', '<leader>b', '<CMD>Pick buffers<CR>', { desc = "Buffers" })
