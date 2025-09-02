@@ -1,7 +1,7 @@
 vim.pack.add({
 	{ src = "https://github.com/zoomiti/firewatch" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
-	{ src = "https://github.com/echasnovski/mini.nvim" },
+	{ src = "https://github.com/echasnovski/mini.icons" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mrcjkb/rustaceanvim" },
 	{ src = 'https://github.com/folke/which-key.nvim' },
@@ -10,8 +10,9 @@ vim.pack.add({
 	{ src = 'https://github.com/airblade/vim-gitgutter' },
 	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter' },
 	{ src = 'https://github.com/rayliwell/tree-sitter-rstml' },
-	{ src = 'https://github.com/Saghen/blink.cmp' },
+	{ src = 'https://github.com/Saghen/blink.cmp',               version = vim.version.range("v1.*") },
 	{ src = 'https://github.com/stevearc/oil.nvim' },
+	{ src = 'https://github.com/catgoose/nvim-colorizer.lua' },
 })
 
 vim.opt.number = true
@@ -38,7 +39,8 @@ vim.g.maplocalleader = ' '
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
 
-require "mini.icons".setup()
+require("mini.icons").setup()
+require("colorizer").setup()
 
 require('oil').setup()
 vim.keymap.set("n", "-", vim.cmd.Oil, { desc = "Open Parent Directory" })
@@ -95,6 +97,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 					vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
 				end
 			})
+		end
+		if client:supports_method('textDocument/documentColor') then
+			vim.lsp.document_color.enable(true, args.buf)
 		end
 	end
 })
