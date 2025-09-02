@@ -106,7 +106,7 @@ export EDITOR='nvim'
 #
 # Aliases
 alias nv='nvim'
-alias nvcfg='nvim ~/.config/nvim/init.lua'
+alias nvcfg='(cd ~/.config/nvim && nvim ~/.config/nvim/init.lua)'
 
 alias diff='diff --color=auto'
 alias ip='ip -color=auto'

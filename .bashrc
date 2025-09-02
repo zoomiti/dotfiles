@@ -24,7 +24,7 @@ alias gc='git commit'
 alias gp='git pull'
 alias gP='git push'
 
-alias nvcfg='nvim ~/.config/nvim/init.lua'
+alias nvcfg='(cd ~/.config/nvim && nvim ~/.config/nvim/init.lua)'
 
 
 
