@@ -1,19 +1,184 @@
-vim.pack.add({
-	{ src = "https://github.com/zoomiti/firewatch" },
-	{ src = "https://github.com/echasnovski/mini.pick" },
-	{ src = "https://github.com/echasnovski/mini.icons" },
-	{ src = "https://github.com/neovim/nvim-lspconfig" },
-	{ src = "https://github.com/mrcjkb/rustaceanvim" },
-	{ src = 'https://github.com/folke/which-key.nvim' },
-	{ src = 'https://github.com/LunarWatcher/auto-pairs' },
-	{ src = 'https://github.com/nvim-lua/plenary.nvim' },
-	{ src = 'https://github.com/NeogitOrg/neogit' },
-	{ src = 'https://github.com/lewis6991/gitsigns.nvim' },
-	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter' },
-	{ src = 'https://github.com/rayliwell/tree-sitter-rstml' },
-	{ src = 'https://github.com/Saghen/blink.cmp',               version = vim.version.range("v1.*") },
-	{ src = 'https://github.com/stevearc/oil.nvim' },
-	{ src = 'https://github.com/catgoose/nvim-colorizer.lua' },
+-- vim: foldmethod=marker foldlevel=0
+
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+require "pack".add({
+	{
+		"zoomiti/firewatch",
+		config = function()
+			vim.opt.termguicolors = true
+			vim.g.dark_transp_bg = 1
+			vim.cmd.colorscheme("fire")
+		end
+	},
+	"nvim-mini/mini.icons",
+	{
+		"nvim-mini/mini.pick",
+		setup = true,
+		config = function()
+			vim.keymap.set('n', '<leader>b', '<CMD>Pick buffers<CR>', { desc = "Buffers" })
+			vim.keymap.set('n', '<leader>f', '<CMD>Pick files<CR>', { desc = "Files" })
+		end
+	},
+	{
+		"nvim-mini/mini.surround",
+		setup = {
+			custom_surroundings = nil,
+			-- Module mappings. Use `''` (empty string) to disable one.
+			mappings = {
+				add = 'gs', -- Add surrounding in Normal and Visual modes
+				delete = 'ds', -- Delete surrounding
+				find = '', -- Find surrounding (to the right)
+				find_left = '', -- Find surrounding (to the left)
+				highlight = '', -- Highlight surrounding
+				replace = 'cs', -- Replace surrounding
+
+				suffix_last = '', -- Suffix to search with "prev" method
+				suffix_next = '', -- Suffix to search with "next" method
+			},
+			respect_selection_type = true,
+			search_method = 'cover_or_next',
+		}
+	},
+	"neovim/nvim-lspconfig",
+	"mrcjkb/rustaceanvim",
+	{
+		"folke/which-key.nvim",
+		config = function()
+			local wk = require("which-key")
+			wk.add({
+				{ "<leader>g", group = "git" },
+				{ "<leader>h", group = "git_hunk" }
+			})
+		end
+	},
+	"LunarWatcher/auto-pairs",
+	{ "nvim-lua/plenary.nvim" },
+	{
+		"NeogitOrg/neogit",
+		config = function()
+			vim.keymap.set('n', '<leader>gs', '<CMD>Neogit kind=split_above_all<CR>', { desc = "Git Status" })
+			vim.keymap.set('n', '<leader>gp', '<CMD>Neogit pull<CR>', { desc = "Git Pull" })
+			vim.keymap.set('n', '<leader>gP', '<CMD>Neogit push<CR>', { desc = "Git Push" })
+		end
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+		setup = {
+			-- {{{ gitsigns on_attach
+			on_attach = function(bufnr)
+				local gitsigns = require('gitsigns')
+
+				local function map(mode, l, r, opts)
+					opts = opts or {}
+					opts.buffer = bufnr
+					vim.keymap.set(mode, l, r, opts)
+				end
+
+				-- Navigation
+				map('n', ']c', function()
+					if vim.wo.diff then
+						vim.cmd.normal({ ']c', bang = true })
+					else
+						gitsigns.nav_hunk('next')
+					end
+				end, { desc = "next hunk" })
+
+				map('n', '[c', function()
+					if vim.wo.diff then
+						vim.cmd.normal({ '[c', bang = true })
+					else
+						gitsigns.nav_hunk('prev')
+					end
+				end, { desc = "prev hunk" })
+
+				-- Actions
+				map('n', '<leader>hs', gitsigns.stage_hunk, { desc = "(un)stage hunk" })
+				map('n', '<leader>hr', gitsigns.reset_hunk, { desc = "reset hunk" })
+
+				map('v', '<leader>hs', function()
+					gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+				end, { desc = "(un)stage hunk" })
+
+				map('v', '<leader>hr', function()
+					gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+				end, { desc = "reset hunk" })
+
+				--map('n', '<leader>hS', gitsigns.stage_buffer)
+				--map('n', '<leader>hR', gitsigns.reset_buffer)
+				map('n', '<leader>hp', gitsigns.preview_hunk, { desc = "preview hunk" })
+				map('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = "preview hunk inline" })
+
+				map('n', '<leader>hb', function()
+					gitsigns.blame_line({ full = true })
+				end, { desc = "blame line" })
+
+				map('n', '<leader>hd', gitsigns.diffthis, { desc = "diff buffer" })
+
+				map('n', '<leader>hD', function()
+					gitsigns.diffthis('~')
+				end, { desc = "diff buffer to HEAD" })
+
+				map('n', '<leader>hQ', function() gitsigns.setqflist('all') end,
+					{ desc = "set qflist with changes in all files and cwd" })
+				map('n', '<leader>hq', gitsigns.setqflist, { desc = "set qflist with changes in current buffer" })
+
+				-- Toggles
+				map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = "toggle current line blame" })
+				map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = "toggle word diff" })
+
+				-- Text object
+				map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "inner hunk" })
+			end
+			-- }}}
+		}
+	},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		module = 'nvim-treesitter.configs',
+		setup = {
+			ensure_installed = { "c", "lua" },
+			sync_install = false,
+			auto_install = false,
+			ignore_install = { "javascript" },
+			highlight = { enable = true },
+			indent = { enable = true },
+		}
+	},
+	{ "rayliwell/tree-sitter-rstml", setup = true },
+	{
+		"Saghen/blink.cmp",
+		version = vim.version.range("v1.*"),
+		build = "cargo build --release",
+		setup = {
+			signature = { enabled = true }
+		}
+	},
+	{
+		"stevearc/oil.nvim",
+		setup = true,
+		config = function()
+			vim.keymap.set("n", "-", vim.cmd.Oil, { desc = "Open Parent Directory" })
+		end
+	},
+	{
+		"catgoose/nvim-colorizer.lua",
+		setup = {
+			user_default_options = {
+				names = true, -- "Name" codes like Blue or red.  Added from `vim.api.nvim_get_color_map()`
+				names_opts = { -- options for mutating/filtering names.
+					lowercase = false, -- name:lower(), highlight `blue` and `red`
+					camelcase = true, -- name, highlight `Blue` and `Red`
+					uppercase = true, -- name:upper(), highlight `BLUE` and `RED`
+					strip_digits = true, -- ignore names with digits,
+					-- highlight `blue` and `red`, but not `blue3` and `red4`
+				},
+				xterm = true,
+			}
+		}
+	},
+	"christoomey/vim-tmux-navigator"
 })
 
 vim.opt.number = true
@@ -34,27 +199,15 @@ vim.g.encoding = 'utf-8'
 vim.opt.conceallevel = 2
 vim.opt.concealcursor = 'n'
 
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
-
-require("mini.icons").setup()
-require("colorizer").setup()
-
-require('oil').setup()
-vim.keymap.set("n", "-", vim.cmd.Oil, { desc = "Open Parent Directory" })
-
-require "mini.pick".setup()
-vim.keymap.set('n', '<leader>b', '<CMD>Pick buffers<CR>', { desc = "Buffers" })
-vim.keymap.set('n', '<leader>f', '<CMD>Pick files<CR>')
 
 vim.keymap.set('n', '<leader>s',
 	'<CMD>update ~/.config/nvim/init.lua<CR><CMD>source ~/.config/nvim/init.lua<CR>', { desc = "Update Config" })
 vim.keymap.set('n', '<leader>w', '<CMD>write<CR>', { desc = "Write File" })
 
--- Terminal Mode
+-- {{{ Terminal Mode
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
 vim.keymap.set('t', '<C-W>h', '<C-\\><C-n><C-W>h')
 vim.keymap.set('t', '<C-W>j', '<C-\\><C-n><C-W>j')
@@ -65,26 +218,19 @@ vim.keymap.set('t', '<C-W><Down>', '<C-\\><C-n><C-W><Down>')
 vim.keymap.set('t', '<C-W><Up>', '<C-\\><C-n><C-W><Up>')
 vim.keymap.set('t', '<C-W><Right>', '<C-\\><C-n><C-W><Right>')
 vim.api.nvim_create_autocmd('BufEnter', { pattern = 'term://*', command = 'startinsert' })
-vim.api.nvim_create_autocmd('BufEnter', {
-	pattern = 'term://*',
+vim.api.nvim_create_autocmd('TermOpen', {
 	callback = function(args)
 		vim.keymap.set('n', '<C-c>', 'i<C-c><C-\\><C-n>', { buffer = args.buf })
 	end
 })
+-- }}}
 
--- Colorscheme
-vim.opt.termguicolors = true
-vim.g.dark_transp_bg = 1
-vim.cmd("colorscheme fire")
 
--- LSP
+-- {{{ LSP
 vim.keymap.set('n', 'grd', vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
 vim.keymap.set({ 'n', 'v', 'x' }, 'grf', vim.lsp.buf.format, { desc = "LSP Format" })
 vim.lsp.inlay_hint.enable(true)
-vim.g.c_syntax_for_h = 1
-require('blink.cmp').setup({
-	signature = { enabled = true }
-})
+vim.g.c_syntax_for_h = true
 vim.lsp.enable({ 'lua_ls', 'ccls' })
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
@@ -121,85 +267,9 @@ vim.diagnostic.config({
 		current_line = true,
 	}
 })
+-- }}}
 
-
-
--- Neogit
-vim.keymap.set('n', '<leader>gs', '<CMD>Neogit kind=split_above_all<CR>', { desc = "Git Status" })
-vim.keymap.set('n', '<leader>gp', '<CMD>Neogit pull<CR>', { desc = "Git Pull" })
-vim.keymap.set('n', '<leader>gP', '<CMD>Neogit push<CR>', { desc = "Git Push" })
-require('gitsigns').setup {
-	on_attach = function(bufnr)
-		local gitsigns = require('gitsigns')
-
-		local function map(mode, l, r, opts)
-			opts = opts or {}
-			opts.buffer = bufnr
-			vim.keymap.set(mode, l, r, opts)
-		end
-
-		-- Navigation
-		map('n', ']c', function()
-			if vim.wo.diff then
-				vim.cmd.normal({ ']c', bang = true })
-			else
-				gitsigns.nav_hunk('next')
-			end
-		end, { desc = "next hunk" })
-
-		map('n', '[c', function()
-			if vim.wo.diff then
-				vim.cmd.normal({ '[c', bang = true })
-			else
-				gitsigns.nav_hunk('prev')
-			end
-		end, { desc = "prev hunk" })
-
-		-- Actions
-		map('n', '<leader>hs', gitsigns.stage_hunk, { desc = "(un)stage hunk" })
-		map('n', '<leader>hr', gitsigns.reset_hunk, { desc = "reset hunk" })
-
-		map('v', '<leader>hs', function()
-			gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-		end, { desc = "(un)stage hunk" })
-
-		map('v', '<leader>hr', function()
-			gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-		end, { desc = "reset hunk" })
-
-		--map('n', '<leader>hS', gitsigns.stage_buffer)
-		--map('n', '<leader>hR', gitsigns.reset_buffer)
-		map('n', '<leader>hp', gitsigns.preview_hunk, { desc = "preview hunk" })
-		map('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = "preview hunk inline" })
-
-		map('n', '<leader>hb', function()
-			gitsigns.blame_line({ full = true })
-		end, { desc = "blame line" })
-
-		map('n', '<leader>hd', gitsigns.diffthis, { desc = "diff buffer" })
-
-		map('n', '<leader>hD', function()
-			gitsigns.diffthis('~')
-		end, { desc = "diff buffer to HEAD" })
-
-		map('n', '<leader>hQ', function() gitsigns.setqflist('all') end,
-			{ desc = "set qflist with changes in all files and cwd" })
-		map('n', '<leader>hq', gitsigns.setqflist, { desc = "set qflist with changes in current buffer" })
-
-		-- Toggles
-		map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = "toggle current line blame" })
-		map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = "toggle word diff" })
-
-		-- Text object
-		map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "inner hunk" })
-	end
-}
-
-local wk = require "which-key"
-wk.add({
-	{ "<leader>g", group = "git" },
-	{ "<leader>h", group = "git_hunk" }
-})
+-- {{{ Status Line
 
 local statusline = {
 	'%{%v:lua.StatuslineHighlight("Left")%}',
@@ -382,18 +452,9 @@ end
 
 vim.opt.statusline = table.concat(statusline, '')
 
-require 'nvim-treesitter.configs'.setup {
-	ensure_installed = { "c", "lua" },
-	--ensure_installed = {},
-	sync_install = false,
-	auto_install = false,
-	ignore_install = { "javascript" },
-	highlight = { enable = true },
-	indent = { enable = true },
-}
+-- }}}
 
-require("tree-sitter-rstml").setup()
-
+-- {{{ Floaterminal
 local function create_floating_window(opts)
 	opts = opts or {}
 	local width = opts.width or math.floor(vim.o.columns * 0.8)
@@ -445,3 +506,5 @@ end
 
 vim.api.nvim_create_user_command("Floaterminal", toggle_terminal, { desc = "Toggles a floating terminal" })
 vim.keymap.set({ "n", "t" }, "<leader>tt", toggle_terminal, { desc = "Toggles a floating terminal" })
+
+-- }}}
