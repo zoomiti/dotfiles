@@ -200,6 +200,28 @@ vim.opt.conceallevel = 2
 vim.opt.concealcursor = 'n'
 
 
+vim.api.nvim_create_autocmd("BufRead", {
+	pattern = "*",
+	callback = function()
+		vim.api.nvim_create_autocmd("FileType", {
+			buffer = 0,
+			once = true,
+			callback = function()
+				local ft = vim.bo.filetype
+				local last_pos = vim.fn.line("'\"")
+				local last_line = vim.fn.line("$")
+
+				if not string.match(ft, "commit") and
+					not string.match(ft, "rebase") and
+					last_pos > 1 and
+					last_pos <= last_line then
+					vim.cmd('silent! normal! g`"')
+				end
+			end,
+		})
+	end,
+})
+
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
 
