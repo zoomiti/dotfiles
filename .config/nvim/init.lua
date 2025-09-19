@@ -58,9 +58,9 @@ require "pack".add({
 	{
 		"NeogitOrg/neogit",
 		config = function()
-			vim.keymap.set('n', '<leader>gs', '<CMD>Neogit kind=split_above_all<CR>', { desc = "Git Status" })
-			vim.keymap.set('n', '<leader>gp', '<CMD>Neogit pull<CR>', { desc = "Git Pull" })
-			vim.keymap.set('n', '<leader>gP', '<CMD>Neogit push<CR>', { desc = "Git Push" })
+			vim.keymap.set('n', '<leader>gs', '<CMD>Neogit kind=split_above_all cwd=%:p:h<CR>', { desc = "Git Status" })
+			vim.keymap.set('n', '<leader>gp', '<CMD>Neogit pull cwd=%:p:h<CR>', { desc = "Git Pull" })
+			vim.keymap.set('n', '<leader>gP', '<CMD>Neogit push cwd=%:p:h<CR>', { desc = "Git Push" })
 		end
 	},
 	{
@@ -201,6 +201,7 @@ vim.opt.concealcursor = 'n'
 
 
 vim.api.nvim_create_autocmd("BufRead", {
+
 	pattern = "*",
 	callback = function()
 		vim.api.nvim_create_autocmd("FileType", {
@@ -220,7 +221,7 @@ vim.api.nvim_create_autocmd("BufRead", {
 			end,
 		})
 	end,
-})
+}) ---}}}
 
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
