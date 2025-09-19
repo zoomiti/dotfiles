@@ -199,7 +199,7 @@ vim.g.encoding = 'utf-8'
 vim.opt.conceallevel = 2
 vim.opt.concealcursor = 'n'
 
-
+-- {{{ Return to last position in file
 vim.api.nvim_create_autocmd("BufRead", {
 
 	pattern = "*",
