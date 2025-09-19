@@ -247,6 +247,20 @@ vim.api.nvim_create_autocmd('TermOpen', {
 })
 -- }}}
 
+-- {{{ Undo File
+
+vim.opt.undofile = true
+
+-- Clean old undo files
+vim.api.nvim_create_user_command("UndoClean", function()
+	local undo_dir = vim.o.undodir
+	vim.fn.system("find " .. undo_dir .. " -type f -mtime +30 -delete")
+	print("Cleaned undo files older than 30 days")
+end, {})
+
+
+
+-- }}}
 
 -- {{{ LSP
 vim.keymap.set('n', 'grd', vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
