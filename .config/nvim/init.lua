@@ -355,12 +355,13 @@ local statusline = {
 	'%{v:lua.StatuslineMode()}',
 	'%{%v:lua.StatuslineHighlight("Secondary")%}',
 	'%{v:lua.StatuslineBranch()}',
-	' %{v:lua.StatuslineFilename()} ',
+	'%{%v:lua.StatuslineFilename()%} ',
+	'%(',
 	'%{%v:lua.StatuslineReadOnly()%}',
 	'%{%v:lua.StatuslineModified()%}',
+	'%)',
 	'%{%v:lua.StatuslineHighlight("Middle")%}',
 	'%=',
-	' ',
 	'%{&ff}',                -- File Format
 	' | ',
 	'%{&fenc!=#""?&fenc:&enc}', -- File Encoding
@@ -453,8 +454,6 @@ local mode_map_hi = {
 	['t']     = 'TERMINAL',
 }
 
-local fmt = string.format
-
 local highlights = {
 	["NORMAL"] = {
 		["Left"] = { fg = "#c8c6c5", bg = "#2e2828", bold = true, },
@@ -494,19 +493,16 @@ for mode, colors in pairs(highlights) do
 	end
 end
 
-
-
-
 function StatuslineHighlight(part)
 	local mode = vim.api.nvim_get_mode().mode
 	local mode_name = mode_map_hi[mode] or mode
-	return fmt('%%#StatusLine_%s_%s#', mode_name, part)
+	return '%#StatusLine_' .. mode_name .. '_' .. part .. '#'
 end
 
 function StatuslineMode()
 	local mode = vim.api.nvim_get_mode().mode
 	local mode_name = mode_map[mode] or mode
-	return fmt('  %s ', mode_name)
+	return '  ' .. mode_name .. ' '
 end
 
 function SpecialBuffer()
@@ -519,23 +515,19 @@ function StatuslineReadOnly()
 end
 
 function StatuslineModified()
-	if vim.b.modifiable then
-		return '%m'
-	else
-		return ''
-	end
+	return vim.bo.modifiable and '%m ' or ''
 end
 
 function StatuslineBranch()
 	local head = vim.b.gitsigns_head
-	return SpecialBuffer() ~= true and head ~= nil and fmt('  git(%s) |', head) or ''
+	return SpecialBuffer() ~= true and head ~= nil and '  git(' .. head .. ') | ' or ''
 end
 
 function StatuslineFilename()
 	local special_files = {
-		['help'] = "Help",
-		['qf'] = '[QuickFix] ' .. (vim.w.quickfix_title or ""),
-		['NeogitStatus'] = vim.b.gitsigns_head
+		['help'] = "  Help",
+		['qf'] = ' %q ' .. (vim.w.quickfix_title or ""),
+		['NeogitStatus'] = '  ' .. (vim.b.gitsigns_head or "")
 	}
 
 	local filename = vim.fn.expand('%:t')
