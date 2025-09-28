@@ -425,32 +425,46 @@ local mode_map_hi = {
 
 local fmt = string.format
 
-vim.cmd [[
- hi StatusLine_NORMAL_Left guifg=#c8c6c5 guibg=#2e2828 gui=BOLD cterm=NONE
- hi StatusLine_NORMAL_Right guifg=#c8c6c5 guibg=#2e2828 gui=NONE cterm=NONE
- hi StatusLine_NORMAL_Secondary guifg=#807970 guibg=#423838 gui=NONE cterm=NONE
- hi StatusLine_NORMAL_Middle guifg=#423838 guibg=#807970 gui=NONE cterm=NONE
+local highlights = {
+	["NORMAL"] = {
+		["Left"] = { fg = "#c8c6c5", bg = "#2e2828", bold = true, },
+		["Right"] = { fg = "#c8c6c5", bg = "#2e2828", },
+		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Middle"] = { fg = "#423838", bg = "#807970", }
+	},
+	["VISUAL"] = {
+		["Left"] = { fg = "#8c9440", bg = "#2e2828", bold = true, },
+		["Right"] = { fg = "#8c9440", bg = "#2e2828", },
+		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Middle"] = { fg = "#423838", bg = "#807970", }
+	},
+	["TERMINAL"] = {
+		["Left"] = { fg = "#8abeb7", bg = "#2e2828", bold = true, },
+		["Right"] = { fg = "#8abeb7", bg = "#2e2828", },
+		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Middle"] = { fg = "#423838", bg = "#807970", }
+	},
+	["INSERT"] = {
+		["Left"] = { fg = "#f0b94e", bg = "#2e2828", bold = true },
+		["Right"] = { fg = "#f0b94e", bg = "#2e2828" },
+		["Secondary"] = { fg = "#423838", bg = "#807970" },
+		["Middle"] = { fg = "#423838", bg = "#807970", }
+	},
+	["REPLACE"] = {
+		["Left"] = { fg = "#de803f", bg = "#2e2828", bold = true },
+		["Right"] = { fg = "#de803f", bg = "#2e2828" },
+		["Secondary"] = { fg = "#423838", bg = "#807970" },
+		["Middle"] = { fg = "#423838", bg = "#807970", }
+	},
+}
 
- hi StatusLine_VISUAL_Left guifg=#8c9440 guibg=#2e2828 gui=BOLD cterm=NONE
- hi StatusLine_VISUAL_Right guifg=#8c9440 guibg=#2e2828 gui=NONE cterm=NONE
- hi StatusLine_VISUAL_Secondary guifg=#807970 guibg=#423838 gui=NONE cterm=NONE
- hi StatusLine_VISUAL_Middle guifg=#423838 guibg=#c8c6c5 gui=NONE cterm=NONE
+for mode, colors in pairs(highlights) do
+	for highlight, color in pairs(colors) do
+		vim.api.nvim_set_hl(0, "StatusLine_" .. mode .. "_" .. highlight, color)
+	end
+end
 
- hi StatusLine_INSERT_Left guifg=#f0b94e guibg=#2e2828 gui=BOLD cterm=NONE
- hi StatusLine_INSERT_Right guifg=#f0b94e guibg=#2e2828 gui=NONE cterm=NONE
- hi StatusLine_INSERT_Middle guifg=#423838 guibg=#c8c6c5 gui=NONE cterm=NONE
- hi StatusLine_INSERT_Secondary guifg=#423838 guibg=#807970 gui=NONE cterm=NONE
 
- hi StatusLine_REPLACE_Left guifg=#de803f guibg=#2e2828 gui=BOLD cterm=NONE
- hi StatusLine_REPLACE_Right guifg=#de803f guibg=#2e2828 gui=NONE cterm=NONE
- hi StatusLine_REPLACE_Middle guifg=#423838 guibg=#c8c6c5 gui=NONE cterm=NONE
- hi StatusLine_REPLACE_Secondary guifg=#423838 guibg=#807970 gui=NONE cterm=NONE
-
- hi StatusLine_TERMINAL_Left guifg=#8abeb7 guibg=#2e2828 gui=BOLD cterm=NONE
- hi StatusLine_TERMINAL_Right guifg=#8abeb7 guibg=#2e2828 gui=NONE cterm=NONE
- hi StatusLine_TERMINAL_Secondary guifg=#807970 guibg=#423838 gui=NONE cterm=NONE
- hi StatusLine_TERMINAL_Middle guifg=#423838 guibg=#807970 gui=NONE cterm=NONE
-]]
 
 
 function StatuslineHighlight(part)
@@ -499,6 +513,7 @@ function StatuslineFilename()
 	return special_files[vim.bo.filetype] or filename == "" and '[No Name]' or filename
 end
 
+vim.opt.showmode = false
 vim.opt.statusline = table.concat(statusline, '')
 
 -- }}}
