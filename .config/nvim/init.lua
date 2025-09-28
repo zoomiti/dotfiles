@@ -459,19 +459,19 @@ local highlights = {
 	["NORMAL"] = {
 		["Left"] = { fg = "#c8c6c5", bg = "#2e2828", bold = true, },
 		["Right"] = { fg = "#c8c6c5", bg = "#2e2828", },
-		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Secondary"] = { fg = "#807970", bg = "#2e2828", },
 		["Middle"] = { fg = "#423838", bg = "#807970", }
 	},
 	["VISUAL"] = {
 		["Left"] = { fg = "#8c9440", bg = "#2e2828", bold = true, },
 		["Right"] = { fg = "#8c9440", bg = "#2e2828", },
-		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Secondary"] = { fg = "#807970", bg = "#2e2828", },
 		["Middle"] = { fg = "#423838", bg = "#807970", }
 	},
 	["TERMINAL"] = {
 		["Left"] = { fg = "#8abeb7", bg = "#2e2828", bold = true, },
 		["Right"] = { fg = "#8abeb7", bg = "#2e2828", },
-		["Secondary"] = { fg = "#807970", bg = "#423838", },
+		["Secondary"] = { fg = "#807970", bg = "#2e2828", },
 		["Middle"] = { fg = "#423838", bg = "#807970", }
 	},
 	["INSERT"] = {
@@ -528,13 +528,13 @@ end
 
 function StatuslineBranch()
 	local head = vim.b.gitsigns_head
-	return SpecialBuffer() ~= true and head ~= nil and fmt('  %s |', head) or ''
+	return SpecialBuffer() ~= true and head ~= nil and fmt('  git(%s) |', head) or ''
 end
 
 function StatuslineFilename()
 	local special_files = {
 		['help'] = "Help",
-		['qf'] = 'QuickFix',
+		['qf'] = '[QuickFix] ' .. (vim.w.quickfix_title or ""),
 		['NeogitStatus'] = vim.b.gitsigns_head
 	}
 
@@ -545,6 +545,7 @@ end
 
 vim.opt.showmode = false
 vim.opt.statusline = table.concat(statusline, '')
+vim.g.qf_disable_statusline = true
 
 -- }}}
 
