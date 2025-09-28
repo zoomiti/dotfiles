@@ -178,7 +178,44 @@ require "pack".add({
 			}
 		}
 	},
-	"christoomey/vim-tmux-navigator"
+	{
+		"alexghergh/nvim-tmux-navigation",
+		-- {{{ nvim-tmux-navigation config
+		config = function()
+			local nvim_tmux_nav = require('nvim-tmux-navigation')
+
+			nvim_tmux_nav.setup {
+				disable_when_zoomed = true -- defaults to false
+			}
+
+			vim.keymap.set('n', "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
+			vim.keymap.set('n', "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
+
+			-- Custom keymaps that work with your Ctrl-w workflow
+			vim.keymap.set('n', '<C-w><C-h>', nvim_tmux_nav.NvimTmuxNavigateLeft, { desc = 'Navigate left' })
+			vim.keymap.set('n', '<C-w><C-j>', nvim_tmux_nav.NvimTmuxNavigateDown, { desc = 'Navigate down' })
+			vim.keymap.set('n', '<C-w><C-k>', nvim_tmux_nav.NvimTmuxNavigateUp, { desc = 'Navigate up' })
+			vim.keymap.set('n', '<C-w><C-l>', nvim_tmux_nav.NvimTmuxNavigateRight, { desc = 'Navigate right' })
+
+			-- Also support single letters after Ctrl-w (like standard Vim)
+			vim.keymap.set('n', '<C-w>h', nvim_tmux_nav.NvimTmuxNavigateLeft, { desc = 'Navigate left' })
+			vim.keymap.set('n', '<C-w>j', nvim_tmux_nav.NvimTmuxNavigateDown, { desc = 'Navigate down' })
+			vim.keymap.set('n', '<C-w>k', nvim_tmux_nav.NvimTmuxNavigateUp, { desc = 'Navigate up' })
+			vim.keymap.set('n', '<C-w>l', nvim_tmux_nav.NvimTmuxNavigateRight, { desc = 'Navigate right' })
+
+			vim.keymap.set('n', '<C-w><Left>', nvim_tmux_nav.NvimTmuxNavigateLeft, { desc = 'Navigate left' })
+			vim.keymap.set('n', '<C-w><Down>', nvim_tmux_nav.NvimTmuxNavigateDown, { desc = 'Navigate down' })
+			vim.keymap.set('n', '<C-w><Up>', nvim_tmux_nav.NvimTmuxNavigateUp, { desc = 'Navigate up' })
+			vim.keymap.set('n', '<C-w><Right>', nvim_tmux_nav.NvimTmuxNavigateRight, { desc = 'Navigate right' })
+
+			-- Previous pane/split
+			vim.keymap.set('n', '<C-w><C-w>', nvim_tmux_nav.NvimTmuxNavigateLastActive,
+				{ desc = 'Navigate to previous' })
+			vim.keymap.set('n', '<C-w>w', nvim_tmux_nav.NvimTmuxNavigateLastActive,
+				{ desc = 'Navigate to previous' })
+		end
+		-- }}}
+	}
 })
 
 vim.opt.number = true
@@ -244,14 +281,7 @@ vim.keymap.set('n', '<leader>w', '<CMD>write<CR>', { desc = "Write File" })
 
 -- {{{ Terminal Mode
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
-vim.keymap.set('t', '<C-W>h', '<C-\\><C-n><C-W>h')
-vim.keymap.set('t', '<C-W>j', '<C-\\><C-n><C-W>j')
-vim.keymap.set('t', '<C-W>k', '<C-\\><C-n><C-W>k')
-vim.keymap.set('t', '<C-W>l', '<C-\\><C-n><C-W>l')
-vim.keymap.set('t', '<C-W><Left>', '<C-\\><C-n><C-W><Left>')
-vim.keymap.set('t', '<C-W><Down>', '<C-\\><C-n><C-W><Down>')
-vim.keymap.set('t', '<C-W><Up>', '<C-\\><C-n><C-W><Up>')
-vim.keymap.set('t', '<C-W><Right>', '<C-\\><C-n><C-W><Right>')
+vim.keymap.set('t', '<C-w>', '<C-\\><C-n><C-w>')
 vim.api.nvim_create_autocmd('BufEnter', { pattern = 'term://*', command = 'startinsert' })
 vim.api.nvim_create_autocmd('TermOpen', {
 	callback = function(args)
