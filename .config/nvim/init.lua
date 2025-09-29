@@ -286,6 +286,13 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 	end,
 }) ---}}}
 
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "help", "qf", "man", "lspinfo", "checkhealth" },
+	callback = function()
+		vim.keymap.set("n", "q", "<CMD>close<CR>", { buffer = true, silent = true })
+	end,
+})
+
 vim.keymap.set("x", "/", "<Esc>/\\%V", { desc = 'Search forward within visual selection' })
 vim.keymap.set("x", "?", "<Esc>?\\%V", { desc = 'Search forward within visual selection' })
 
