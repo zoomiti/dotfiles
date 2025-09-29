@@ -266,26 +266,20 @@ vim.g.clipboard = {
 }
 
 -- {{{ Return to last position in file
-vim.api.nvim_create_autocmd("BufRead", {
-
-	pattern = "*",
+vim.api.nvim_create_autocmd("BufWinEnter", {
 	callback = function()
-		vim.api.nvim_create_autocmd("FileType", {
-			buffer = 0,
-			once = true,
-			callback = function()
-				local ft = vim.bo.filetype
-				local last_pos = vim.fn.line("'\"")
-				local last_line = vim.fn.line("$")
+		local ft = vim.bo.filetype
+		local last_pos = vim.fn.line("'\"")
+		local last_line = vim.fn.line("$")
 
-				if not string.match(ft, "commit") and
-					not string.match(ft, "rebase") and
-					last_pos > 1 and
-					last_pos <= last_line then
-					vim.cmd('silent! normal! g`"')
-				end
-			end,
-		})
+		if not string.match(ft, "commit") and
+			not string.match(ft, "rebase") and
+			last_pos > 1 and
+			last_pos <= last_line then
+			vim.cmd('silent! normal! g`"')
+			vim.cmd('silent! foldopen!')
+			vim.cmd('silent! normal! zz')
+		end
 	end,
 }) ---}}}
 
