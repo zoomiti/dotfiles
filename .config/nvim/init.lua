@@ -306,29 +306,74 @@ end, {})
 -- }}}
 
 -- {{{ LSP
-vim.keymap.set('n', 'grd', vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
-vim.keymap.set({ 'n', 'v', 'x' }, 'grf', vim.lsp.buf.format, { desc = "LSP Format" })
-vim.lsp.inlay_hint.enable(true)
+vim.o.foldlevel = 1
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.g.c_syntax_for_h = true
 vim.lsp.enable({ 'lua_ls', 'ccls' })
+vim.g.auto_format = true
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 		if not client then return end
 
+		vim.lsp.inlay_hint.enable(true)
+		vim.keymap.set('n', 'grd', vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
+
 		if client:supports_method('textDocument/formatting', args.buf) then
+			vim.keymap.set({ 'n', 'v', 'x' }, 'grf', vim.lsp.buf.format, { desc = "LSP Format" })
+			vim.b.auto_format = true
 			vim.api.nvim_create_autocmd("BufWritePre", {
+				group = vim.api.nvim_create_augroup("AutoFormat", { clear = true }),
 				buffer = args.buf,
 				callback = function()
-					vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
+					if vim.g.auto_format and vim.b.auto_format then
+						vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
+					end
 				end
 			})
+		end
+		if client:supports_method('textDocument/foldingRange') then
+			local win = vim.api.nvim_get_current_win()
+			vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
 		end
 		if client:supports_method('textDocument/documentColor') then
 			vim.lsp.document_color.enable(true, args.buf)
 		end
 	end
 })
+-- {{{ Commands to toggle auto format
+vim.api.nvim_create_user_command("FormatToggle", function()
+	vim.g.auto_format = not vim.g.auto_format
+	print("Auto format " .. (vim.g.auto_format and "enabled" or "disabled"))
+end, {})
+
+vim.api.nvim_create_user_command("FormatEnable", function()
+	vim.g.auto_format = true
+	print("Auto format enabled")
+end, {})
+
+vim.api.nvim_create_user_command("FormatDisable", function()
+	vim.g.auto_format = false
+	print("Auto format disabled")
+end, {})
+
+vim.api.nvim_create_user_command("FormatToggleBuffer", function()
+	vim.b.auto_format = not vim.b.auto_format
+	print("Auto format " .. (vim.b.auto_format and "enabled" or "disabled"))
+end, {})
+
+vim.api.nvim_create_user_command("FormatEnableBuffer", function()
+	vim.b.auto_format = true
+	print("Auto format enabled")
+end, {})
+
+vim.api.nvim_create_user_command("FormatDisableBuffer", function()
+	vim.b.auto_format = false
+	print("Auto format disabled")
+end, {})
+-- }}}
+
 vim.diagnostic.config({
 	jump = {
 		virtual_lines = true
