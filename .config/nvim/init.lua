@@ -41,6 +41,24 @@ require "pack".add({
 			search_method = 'cover_or_next',
 		}
 	},
+	{
+		"nvim-mini/mini.pairs",
+		setup = {
+			mappings = {
+				['('] = { neigh_pattern = '[^\\]%s' },
+				['['] = { neigh_pattern = '[^\\]%s' },
+				['{'] = { neigh_pattern = '[^\\]%s' },
+
+				[')'] = { neigh_pattern = '[^\\]%s' },
+				[']'] = { neigh_pattern = '[^\\]%s' },
+				['}'] = { neigh_pattern = '[^\\]%s' },
+
+				['"'] = { neigh_pattern = '[^\\]%s' },
+				["'"] = { neigh_pattern = '[^%a\\]%s' },
+				['`'] = { neigh_pattern = '[^\\]%s' },
+			},
+		}
+	},
 	"neovim/nvim-lspconfig",
 	"mrcjkb/rustaceanvim",
 	{
@@ -53,7 +71,6 @@ require "pack".add({
 			})
 		end
 	},
-	"LunarWatcher/auto-pairs",
 	{ "nvim-lua/plenary.nvim" },
 	{
 		"NeogitOrg/neogit",
