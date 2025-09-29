@@ -12,7 +12,10 @@ require "pack".add({
 			vim.cmd.colorscheme("fire")
 		end
 	},
-	"nvim-mini/mini.icons",
+	{
+		"nvim-mini/mini.icons",
+		setup = true
+	},
 	{
 		"nvim-mini/mini.pick",
 		setup = true,
