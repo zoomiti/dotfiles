@@ -135,14 +135,13 @@ preexec() {
   print -n -- $'\e]133;C\e\\'
 }
 
-# Capture last exit status and send OSC 133 ;D
 precmd() {
-  LAST_STATUS=$?
-  print -n -- $'\e]133;D;'"$LAST_STATUS"$'\e\\'
+  local last=$?
+  print -n -- $'\e]133;D;'"$last"$'\e\\'
+  print -n -- $'\e]133;A\e\\'
 }
 
 # ---- Prompt definition ----
-PROMPT=$'%{\e]133;A\a%}'\
-"${WHITE}[${YELLOW}%n${CYAN}@${ORANGE}%m${WHITE}](${BLUE}%~${WHITE})]"\
-'$(if [[ $LAST_STATUS -eq 0 ]]; then echo "${ORANGE}\$${RESET}"; else echo "${RED}\$${RESET}"; fi)'\
+PROMPT="${WHITE}[${YELLOW}%n${CYAN}@${ORANGE}%m${WHITE}](${BLUE}%~${WHITE})]"\
+"%(?.${ORANGE}.${RED})\$${RESET}"\
 $'%{\e]133;B\a%} '
